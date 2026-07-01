@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -9,6 +9,8 @@ import {
   Wrench,
   BarChart3,
   Sparkles,
+  AlertTriangle,
+  Loader2,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { TONE_TEXT, type Tone } from "@/components/hn/primitives";
