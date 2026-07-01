@@ -157,7 +157,7 @@ export async function logActivity(
     action,
     target_type,
     target_id,
-    meta,
+    meta: meta as never,
   });
 }
 
