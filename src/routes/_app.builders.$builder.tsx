@@ -1,7 +1,9 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { useState } from "react";
 import { ArrowLeft, Check, Rocket } from "lucide-react";
 import { EnergyLine, GlassCard, GlowIcon, StatusDot } from "@/components/hn/primitives";
 import { HN_BUILDER_BY_SLUG, HN_BUILDERS } from "@/lib/hn/builders";
+import { CreateProjectDialog } from "@/components/hn/CreateProjectDialog";
 
 export const Route = createFileRoute("/_app/builders/$builder")({
   loader: ({ params }) => {
