@@ -93,10 +93,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "HN Platform — The Digital Operating System for HN Ecosystem" },
-      { name: "twitter:description", content: "HN Platform — The Digital Operating System for HN Ecosystem" },
+      { name: "twitter:description", content: "HN Platform Architecture Bible is a comprehensive architectural reference for building a scalable and evolving digital ecosystem." },
       { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/afccce94-18d4-4fcf-a5eb-13a52fcb64d3" },
       { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/afccce94-18d4-4fcf-a5eb-13a52fcb64d3" },
 
+      { name: "description", content: "HN Platform Architecture Bible is a comprehensive architectural reference for building a scalable and evolving digital ecosystem." },
+      { property: "og:description", content: "HN Platform Architecture Bible is a comprehensive architectural reference for building a scalable and evolving digital ecosystem." },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
