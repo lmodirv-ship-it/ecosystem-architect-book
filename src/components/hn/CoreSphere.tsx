@@ -230,6 +230,9 @@ export function CoreSphere({ open, onClose }: { open: boolean; onClose: () => vo
                       y={y}
                       z={z}
                       counter={{ x: -rot.x, y: -rot.y }}
+                      onEnter={enterNode}
+                      busy={loading?.node.id === n.id}
+                      disabled={!!loading}
                     />
                   );
                 })}
