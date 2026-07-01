@@ -237,8 +237,11 @@ export function CoreOrbit() {
         className="absolute"
         style={{ left: cx, top: cy, transform: "translate(-50%,-50%)" }}
       >
-        <Link
-          to="/core"
+        <button
+          type="button"
+          onClick={() => setSphereOpen(true)}
+          onDoubleClick={() => navigate({ to: "/core" })}
+          title="Open 3D Console — double-click to open HN Core page"
           className="group relative flex items-center justify-center"
           style={{ width: rInner * 2, height: rInner * 2 }}
         >
@@ -257,10 +260,10 @@ export function CoreOrbit() {
               HN Core
             </div>
             <div className="text-[9px] uppercase tracking-widest text-muted-foreground">
-              Central Brain
+              Tap to enter
             </div>
           </motion.div>
-        </Link>
+        </button>
       </div>
 
       {/* Tagline */}
