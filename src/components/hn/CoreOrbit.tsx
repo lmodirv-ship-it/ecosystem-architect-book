@@ -4,12 +4,14 @@ import { useState } from "react";
 import { BrainCircuit } from "lucide-react";
 import { HN_APPS } from "@/lib/hn/data";
 import { TONE_TEXT } from "@/components/hn/primitives";
+import { CoreSphere } from "@/components/hn/CoreSphere";
 
 /** HN Core orbital center — every application orbits the brain. */
 export function CoreOrbit() {
   const apps = HN_APPS.filter((a) => a.id !== "add").slice(0, 8);
   const [hover, setHover] = useState<string | null>(null);
   const [launching, setLaunching] = useState<string | null>(null);
+  const [sphereOpen, setSphereOpen] = useState(false);
   const navigate = useNavigate();
 
   const size = 520;
@@ -235,8 +237,11 @@ export function CoreOrbit() {
         className="absolute"
         style={{ left: cx, top: cy, transform: "translate(-50%,-50%)" }}
       >
-        <Link
-          to="/core"
+        <button
+          type="button"
+          onClick={() => setSphereOpen(true)}
+          onDoubleClick={() => navigate({ to: "/core" })}
+          title="Open 3D Console — double-click to open HN Core page"
           className="group relative flex items-center justify-center"
           style={{ width: rInner * 2, height: rInner * 2 }}
         >
@@ -255,10 +260,10 @@ export function CoreOrbit() {
               HN Core
             </div>
             <div className="text-[9px] uppercase tracking-widest text-muted-foreground">
-              Central Brain
+              Tap to enter
             </div>
           </motion.div>
-        </Link>
+        </button>
       </div>
 
       {/* Tagline */}
@@ -270,6 +275,8 @@ export function CoreOrbit() {
           قلب واحد… ومنظومة لا حدود لها
         </div>
       </div>
+
+      <CoreSphere open={sphereOpen} onClose={() => setSphereOpen(false)} />
     </div>
   );
 }
