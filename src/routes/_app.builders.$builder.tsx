@@ -35,6 +35,7 @@ export const Route = createFileRoute("/_app/builders/$builder")({
 function BuilderPage() {
   const { slug } = Route.useLoaderData();
   const b = HN_BUILDER_BY_SLUG[slug];
+  const [open, setOpen] = useState(false);
   if (!b) return null;
   return (
     <div className="space-y-6">
