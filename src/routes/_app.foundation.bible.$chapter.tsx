@@ -1,7 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowLeft, ArrowRight, BookOpen } from "lucide-react";
 import { EnergyLine, GlassCard, GlowIcon } from "@/components/hn/primitives";
-import { HN_BIBLE_CHAPTERS, getChapterBySlug } from "@/lib/hn/bible";
+import { HN_BIBLE_CHAPTERS, getChapterBySlug, type BibleChapter } from "@/lib/hn/bible";
 
 export const Route = createFileRoute("/_app/foundation/bible/$chapter")({
   head: ({ params }) => {
@@ -34,7 +34,7 @@ export const Route = createFileRoute("/_app/foundation/bible/$chapter")({
 });
 
 function ChapterPage() {
-  const { chapter } = Route.useLoaderData();
+  const { chapter } = Route.useLoaderData() as { chapter: BibleChapter };
   const idx = HN_BIBLE_CHAPTERS.findIndex((c) => c.slug === chapter.slug);
   const prev = idx > 0 ? HN_BIBLE_CHAPTERS[idx - 1] : null;
   const next =

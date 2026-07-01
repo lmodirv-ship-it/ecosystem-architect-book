@@ -23,6 +23,7 @@ import { Route as AppApplicationsRouteImport } from './routes/_app.applications'
 import { Route as AppAnalyticsRouteImport } from './routes/_app.analytics'
 import { Route as AppAiCenterRouteImport } from './routes/_app.ai-center'
 import { Route as AppFoundationBibleRouteImport } from './routes/_app.foundation.bible'
+import { Route as AppFoundationBibleChapterRouteImport } from './routes/_app.foundation.bible.$chapter'
 
 const AppRoute = AppRouteImport.update({
   id: '/_app',
@@ -93,6 +94,12 @@ const AppFoundationBibleRoute = AppFoundationBibleRouteImport.update({
   path: '/bible',
   getParentRoute: () => AppFoundationRoute,
 } as any)
+const AppFoundationBibleChapterRoute =
+  AppFoundationBibleChapterRouteImport.update({
+    id: '/$chapter',
+    path: '/$chapter',
+    getParentRoute: () => AppFoundationBibleRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
@@ -107,7 +114,8 @@ export interface FileRoutesByFullPath {
   '/projects': typeof AppProjectsRoute
   '/security': typeof AppSecurityRoute
   '/settings': typeof AppSettingsRoute
-  '/foundation/bible': typeof AppFoundationBibleRoute
+  '/foundation/bible': typeof AppFoundationBibleRouteWithChildren
+  '/foundation/bible/$chapter': typeof AppFoundationBibleChapterRoute
 }
 export interface FileRoutesByTo {
   '/ai-center': typeof AppAiCenterRoute
@@ -122,7 +130,8 @@ export interface FileRoutesByTo {
   '/security': typeof AppSecurityRoute
   '/settings': typeof AppSettingsRoute
   '/': typeof AppIndexRoute
-  '/foundation/bible': typeof AppFoundationBibleRoute
+  '/foundation/bible': typeof AppFoundationBibleRouteWithChildren
+  '/foundation/bible/$chapter': typeof AppFoundationBibleChapterRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -139,7 +148,8 @@ export interface FileRoutesById {
   '/_app/security': typeof AppSecurityRoute
   '/_app/settings': typeof AppSettingsRoute
   '/_app/': typeof AppIndexRoute
-  '/_app/foundation/bible': typeof AppFoundationBibleRoute
+  '/_app/foundation/bible': typeof AppFoundationBibleRouteWithChildren
+  '/_app/foundation/bible/$chapter': typeof AppFoundationBibleChapterRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -157,6 +167,7 @@ export interface FileRouteTypes {
     | '/security'
     | '/settings'
     | '/foundation/bible'
+    | '/foundation/bible/$chapter'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/ai-center'
@@ -172,6 +183,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/'
     | '/foundation/bible'
+    | '/foundation/bible/$chapter'
   id:
     | '__root__'
     | '/_app'
@@ -188,6 +200,7 @@ export interface FileRouteTypes {
     | '/_app/settings'
     | '/_app/'
     | '/_app/foundation/bible'
+    | '/_app/foundation/bible/$chapter'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -294,15 +307,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppFoundationBibleRouteImport
       parentRoute: typeof AppFoundationRoute
     }
+    '/_app/foundation/bible/$chapter': {
+      id: '/_app/foundation/bible/$chapter'
+      path: '/$chapter'
+      fullPath: '/foundation/bible/$chapter'
+      preLoaderRoute: typeof AppFoundationBibleChapterRouteImport
+      parentRoute: typeof AppFoundationBibleRoute
+    }
   }
 }
 
+interface AppFoundationBibleRouteChildren {
+  AppFoundationBibleChapterRoute: typeof AppFoundationBibleChapterRoute
+}
+
+const AppFoundationBibleRouteChildren: AppFoundationBibleRouteChildren = {
+  AppFoundationBibleChapterRoute: AppFoundationBibleChapterRoute,
+}
+
+const AppFoundationBibleRouteWithChildren =
+  AppFoundationBibleRoute._addFileChildren(AppFoundationBibleRouteChildren)
+
 interface AppFoundationRouteChildren {
-  AppFoundationBibleRoute: typeof AppFoundationBibleRoute
+  AppFoundationBibleRoute: typeof AppFoundationBibleRouteWithChildren
 }
 
 const AppFoundationRouteChildren: AppFoundationRouteChildren = {
-  AppFoundationBibleRoute: AppFoundationBibleRoute,
+  AppFoundationBibleRoute: AppFoundationBibleRouteWithChildren,
 }
 
 const AppFoundationRouteWithChildren = AppFoundationRoute._addFileChildren(
