@@ -4,6 +4,7 @@ import { useState } from "react";
 import { BrainCircuit } from "lucide-react";
 import { HN_APPS } from "@/lib/hn/data";
 import { TONE_TEXT } from "@/components/hn/primitives";
+import { CoreSphere } from "@/components/hn/CoreSphere";
 
 /** HN Core orbital center — every application orbits the brain. */
 export function CoreOrbit() {
