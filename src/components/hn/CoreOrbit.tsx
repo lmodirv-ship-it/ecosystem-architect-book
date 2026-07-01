@@ -11,6 +11,7 @@ export function CoreOrbit() {
   const apps = HN_APPS.filter((a) => a.id !== "add").slice(0, 8);
   const [hover, setHover] = useState<string | null>(null);
   const [launching, setLaunching] = useState<string | null>(null);
+  const [sphereOpen, setSphereOpen] = useState(false);
   const navigate = useNavigate();
 
   const size = 520;
