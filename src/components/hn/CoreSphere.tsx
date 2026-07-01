@@ -334,12 +334,18 @@ function SphereNode({
   y,
   z,
   counter,
+  onEnter,
+  busy,
+  disabled,
 }: {
   node: Node;
   x: number;
   y: number;
   z: number;
   counter: { x: number; y: number };
+  onEnter: (node: Node) => void;
+  busy: boolean;
+  disabled: boolean;
 }) {
   const Icon = node.icon;
   return (
@@ -350,26 +356,35 @@ function SphereNode({
         transformStyle: "preserve-3d",
       }}
     >
-      {/* Counter-rotate so icons always face viewer */}
       <div
         style={{
           transform: `rotateY(${counter.y}deg) rotateX(${counter.x}deg)`,
           transformStyle: "preserve-3d",
         }}
       >
-        <Link
-          to={node.href}
-          className="group flex flex-col items-center"
+        <button
+          type="button"
+          disabled={disabled}
+          onClick={() => onEnter(node)}
           onPointerDown={(e) => e.stopPropagation()}
+          className="group flex flex-col items-center disabled:cursor-wait disabled:opacity-70"
+          aria-label={`Open ${node.name}`}
         >
           <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl hn-glass-strong ring-1 ring-white/15 transition-all duration-200 group-hover:scale-110 group-hover:ring-violet/60">
-            <Icon className={`h-7 w-7 ${TONE_TEXT[node.tone]}`} />
+            {busy ? (
+              <Loader2 className={`h-6 w-6 animate-spin ${TONE_TEXT[node.tone]}`} />
+            ) : (
+              <Icon className={`h-7 w-7 ${TONE_TEXT[node.tone]}`} />
+            )}
             <span className="pointer-events-none absolute -inset-2 rounded-3xl bg-violet/20 blur-xl opacity-0 transition-opacity group-hover:opacity-100" />
+            {busy && (
+              <span className="pointer-events-none absolute -inset-2 rounded-3xl bg-violet/30 blur-xl opacity-100" />
+            )}
           </div>
           <div className="mt-1.5 whitespace-nowrap rounded-md bg-background/70 px-2 py-0.5 text-[10px] font-medium text-foreground/90 backdrop-blur">
             {node.name}
           </div>
-        </Link>
+        </button>
       </div>
     </div>
   );
