@@ -84,7 +84,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "HN Platform is the Digital Operating System of the HN Ecosystem — a unified command surface for applications, data, AI agents, automation and governance.",
       },
       { name: "author", content: "HN Groupe" },
-      { property: "og:title", content: "HN Platform — Digital Operating System" },
+      { property: "og:title", content: "HN Platform — The Digital Operating System for HN Ecosystem" },
       {
         property: "og:description",
         content:
@@ -92,6 +92,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "HN Platform — The Digital Operating System for HN Ecosystem" },
+      { name: "description", content: "HN Platform
+The Digital Operating System for HN Ecosystem" },
+      { property: "og:description", content: "HN Platform
+The Digital Operating System for HN Ecosystem" },
+      { name: "twitter:description", content: "HN Platform
+The Digital Operating System for HN Ecosystem" },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/afccce94-18d4-4fcf-a5eb-13a52fcb64d3" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/afccce94-18d4-4fcf-a5eb-13a52fcb64d3" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
