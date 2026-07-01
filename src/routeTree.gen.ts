@@ -11,6 +11,18 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppIndexRouteImport } from './routes/_app.index'
+import { Route as AppSettingsRouteImport } from './routes/_app.settings'
+import { Route as AppSecurityRouteImport } from './routes/_app.security'
+import { Route as AppProjectsRouteImport } from './routes/_app.projects'
+import { Route as AppNawatRouteImport } from './routes/_app.nawat'
+import { Route as AppFoundationRouteImport } from './routes/_app.foundation'
+import { Route as AppDatabaseRouteImport } from './routes/_app.database'
+import { Route as AppCloudRouteImport } from './routes/_app.cloud'
+import { Route as AppAutomationRouteImport } from './routes/_app.automation'
+import { Route as AppApplicationsRouteImport } from './routes/_app.applications'
+import { Route as AppAnalyticsRouteImport } from './routes/_app.analytics'
+import { Route as AppAiCenterRouteImport } from './routes/_app.ai-center'
+import { Route as AppFoundationBibleRouteImport } from './routes/_app.foundation.bible'
 
 const AppRoute = AppRouteImport.update({
   id: '/_app',
@@ -21,24 +33,161 @@ const AppIndexRoute = AppIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppRoute,
 } as any)
+const AppSettingsRoute = AppSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSecurityRoute = AppSecurityRouteImport.update({
+  id: '/security',
+  path: '/security',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppProjectsRoute = AppProjectsRouteImport.update({
+  id: '/projects',
+  path: '/projects',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppNawatRoute = AppNawatRouteImport.update({
+  id: '/nawat',
+  path: '/nawat',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppFoundationRoute = AppFoundationRouteImport.update({
+  id: '/foundation',
+  path: '/foundation',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppDatabaseRoute = AppDatabaseRouteImport.update({
+  id: '/database',
+  path: '/database',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCloudRoute = AppCloudRouteImport.update({
+  id: '/cloud',
+  path: '/cloud',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAutomationRoute = AppAutomationRouteImport.update({
+  id: '/automation',
+  path: '/automation',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppApplicationsRoute = AppApplicationsRouteImport.update({
+  id: '/applications',
+  path: '/applications',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAnalyticsRoute = AppAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAiCenterRoute = AppAiCenterRouteImport.update({
+  id: '/ai-center',
+  path: '/ai-center',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppFoundationBibleRoute = AppFoundationBibleRouteImport.update({
+  id: '/bible',
+  path: '/bible',
+  getParentRoute: () => AppFoundationRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
+  '/ai-center': typeof AppAiCenterRoute
+  '/analytics': typeof AppAnalyticsRoute
+  '/applications': typeof AppApplicationsRoute
+  '/automation': typeof AppAutomationRoute
+  '/cloud': typeof AppCloudRoute
+  '/database': typeof AppDatabaseRoute
+  '/foundation': typeof AppFoundationRouteWithChildren
+  '/nawat': typeof AppNawatRoute
+  '/projects': typeof AppProjectsRoute
+  '/security': typeof AppSecurityRoute
+  '/settings': typeof AppSettingsRoute
+  '/foundation/bible': typeof AppFoundationBibleRoute
 }
 export interface FileRoutesByTo {
+  '/ai-center': typeof AppAiCenterRoute
+  '/analytics': typeof AppAnalyticsRoute
+  '/applications': typeof AppApplicationsRoute
+  '/automation': typeof AppAutomationRoute
+  '/cloud': typeof AppCloudRoute
+  '/database': typeof AppDatabaseRoute
+  '/foundation': typeof AppFoundationRouteWithChildren
+  '/nawat': typeof AppNawatRoute
+  '/projects': typeof AppProjectsRoute
+  '/security': typeof AppSecurityRoute
+  '/settings': typeof AppSettingsRoute
   '/': typeof AppIndexRoute
+  '/foundation/bible': typeof AppFoundationBibleRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppRouteWithChildren
+  '/_app/ai-center': typeof AppAiCenterRoute
+  '/_app/analytics': typeof AppAnalyticsRoute
+  '/_app/applications': typeof AppApplicationsRoute
+  '/_app/automation': typeof AppAutomationRoute
+  '/_app/cloud': typeof AppCloudRoute
+  '/_app/database': typeof AppDatabaseRoute
+  '/_app/foundation': typeof AppFoundationRouteWithChildren
+  '/_app/nawat': typeof AppNawatRoute
+  '/_app/projects': typeof AppProjectsRoute
+  '/_app/security': typeof AppSecurityRoute
+  '/_app/settings': typeof AppSettingsRoute
   '/_app/': typeof AppIndexRoute
+  '/_app/foundation/bible': typeof AppFoundationBibleRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/ai-center'
+    | '/analytics'
+    | '/applications'
+    | '/automation'
+    | '/cloud'
+    | '/database'
+    | '/foundation'
+    | '/nawat'
+    | '/projects'
+    | '/security'
+    | '/settings'
+    | '/foundation/bible'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/_app' | '/_app/'
+  to:
+    | '/ai-center'
+    | '/analytics'
+    | '/applications'
+    | '/automation'
+    | '/cloud'
+    | '/database'
+    | '/foundation'
+    | '/nawat'
+    | '/projects'
+    | '/security'
+    | '/settings'
+    | '/'
+    | '/foundation/bible'
+  id:
+    | '__root__'
+    | '/_app'
+    | '/_app/ai-center'
+    | '/_app/analytics'
+    | '/_app/applications'
+    | '/_app/automation'
+    | '/_app/cloud'
+    | '/_app/database'
+    | '/_app/foundation'
+    | '/_app/nawat'
+    | '/_app/projects'
+    | '/_app/security'
+    | '/_app/settings'
+    | '/_app/'
+    | '/_app/foundation/bible'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -61,14 +210,132 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/settings': {
+      id: '/_app/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AppSettingsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/security': {
+      id: '/_app/security'
+      path: '/security'
+      fullPath: '/security'
+      preLoaderRoute: typeof AppSecurityRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/projects': {
+      id: '/_app/projects'
+      path: '/projects'
+      fullPath: '/projects'
+      preLoaderRoute: typeof AppProjectsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/nawat': {
+      id: '/_app/nawat'
+      path: '/nawat'
+      fullPath: '/nawat'
+      preLoaderRoute: typeof AppNawatRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/foundation': {
+      id: '/_app/foundation'
+      path: '/foundation'
+      fullPath: '/foundation'
+      preLoaderRoute: typeof AppFoundationRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/database': {
+      id: '/_app/database'
+      path: '/database'
+      fullPath: '/database'
+      preLoaderRoute: typeof AppDatabaseRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/cloud': {
+      id: '/_app/cloud'
+      path: '/cloud'
+      fullPath: '/cloud'
+      preLoaderRoute: typeof AppCloudRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/automation': {
+      id: '/_app/automation'
+      path: '/automation'
+      fullPath: '/automation'
+      preLoaderRoute: typeof AppAutomationRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/applications': {
+      id: '/_app/applications'
+      path: '/applications'
+      fullPath: '/applications'
+      preLoaderRoute: typeof AppApplicationsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/analytics': {
+      id: '/_app/analytics'
+      path: '/analytics'
+      fullPath: '/analytics'
+      preLoaderRoute: typeof AppAnalyticsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/ai-center': {
+      id: '/_app/ai-center'
+      path: '/ai-center'
+      fullPath: '/ai-center'
+      preLoaderRoute: typeof AppAiCenterRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/foundation/bible': {
+      id: '/_app/foundation/bible'
+      path: '/bible'
+      fullPath: '/foundation/bible'
+      preLoaderRoute: typeof AppFoundationBibleRouteImport
+      parentRoute: typeof AppFoundationRoute
+    }
   }
 }
 
+interface AppFoundationRouteChildren {
+  AppFoundationBibleRoute: typeof AppFoundationBibleRoute
+}
+
+const AppFoundationRouteChildren: AppFoundationRouteChildren = {
+  AppFoundationBibleRoute: AppFoundationBibleRoute,
+}
+
+const AppFoundationRouteWithChildren = AppFoundationRoute._addFileChildren(
+  AppFoundationRouteChildren,
+)
+
 interface AppRouteChildren {
+  AppAiCenterRoute: typeof AppAiCenterRoute
+  AppAnalyticsRoute: typeof AppAnalyticsRoute
+  AppApplicationsRoute: typeof AppApplicationsRoute
+  AppAutomationRoute: typeof AppAutomationRoute
+  AppCloudRoute: typeof AppCloudRoute
+  AppDatabaseRoute: typeof AppDatabaseRoute
+  AppFoundationRoute: typeof AppFoundationRouteWithChildren
+  AppNawatRoute: typeof AppNawatRoute
+  AppProjectsRoute: typeof AppProjectsRoute
+  AppSecurityRoute: typeof AppSecurityRoute
+  AppSettingsRoute: typeof AppSettingsRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppAiCenterRoute: AppAiCenterRoute,
+  AppAnalyticsRoute: AppAnalyticsRoute,
+  AppApplicationsRoute: AppApplicationsRoute,
+  AppAutomationRoute: AppAutomationRoute,
+  AppCloudRoute: AppCloudRoute,
+  AppDatabaseRoute: AppDatabaseRoute,
+  AppFoundationRoute: AppFoundationRouteWithChildren,
+  AppNawatRoute: AppNawatRoute,
+  AppProjectsRoute: AppProjectsRoute,
+  AppSecurityRoute: AppSecurityRoute,
+  AppSettingsRoute: AppSettingsRoute,
   AppIndexRoute: AppIndexRoute,
 }
 
