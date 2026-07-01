@@ -22,7 +22,7 @@ import { Route as AppAutomationRouteImport } from './routes/_app.automation'
 import { Route as AppApplicationsRouteImport } from './routes/_app.applications'
 import { Route as AppAnalyticsRouteImport } from './routes/_app.analytics'
 import { Route as AppAiCenterRouteImport } from './routes/_app.ai-center'
-import { Route as AppFoundationBibleRouteImport } from './routes/_app.foundation.bible'
+import { Route as AppFoundationBibleIndexRouteImport } from './routes/_app.foundation.bible.index'
 import { Route as AppFoundationBibleChapterRouteImport } from './routes/_app.foundation.bible.$chapter'
 
 const AppRoute = AppRouteImport.update({
@@ -89,16 +89,16 @@ const AppAiCenterRoute = AppAiCenterRouteImport.update({
   path: '/ai-center',
   getParentRoute: () => AppRoute,
 } as any)
-const AppFoundationBibleRoute = AppFoundationBibleRouteImport.update({
-  id: '/bible',
-  path: '/bible',
+const AppFoundationBibleIndexRoute = AppFoundationBibleIndexRouteImport.update({
+  id: '/bible/',
+  path: '/bible/',
   getParentRoute: () => AppFoundationRoute,
 } as any)
 const AppFoundationBibleChapterRoute =
   AppFoundationBibleChapterRouteImport.update({
-    id: '/$chapter',
-    path: '/$chapter',
-    getParentRoute: () => AppFoundationBibleRoute,
+    id: '/bible/$chapter',
+    path: '/bible/$chapter',
+    getParentRoute: () => AppFoundationRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -114,8 +114,8 @@ export interface FileRoutesByFullPath {
   '/projects': typeof AppProjectsRoute
   '/security': typeof AppSecurityRoute
   '/settings': typeof AppSettingsRoute
-  '/foundation/bible': typeof AppFoundationBibleRouteWithChildren
   '/foundation/bible/$chapter': typeof AppFoundationBibleChapterRoute
+  '/foundation/bible/': typeof AppFoundationBibleIndexRoute
 }
 export interface FileRoutesByTo {
   '/ai-center': typeof AppAiCenterRoute
@@ -130,8 +130,8 @@ export interface FileRoutesByTo {
   '/security': typeof AppSecurityRoute
   '/settings': typeof AppSettingsRoute
   '/': typeof AppIndexRoute
-  '/foundation/bible': typeof AppFoundationBibleRouteWithChildren
   '/foundation/bible/$chapter': typeof AppFoundationBibleChapterRoute
+  '/foundation/bible': typeof AppFoundationBibleIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -148,8 +148,8 @@ export interface FileRoutesById {
   '/_app/security': typeof AppSecurityRoute
   '/_app/settings': typeof AppSettingsRoute
   '/_app/': typeof AppIndexRoute
-  '/_app/foundation/bible': typeof AppFoundationBibleRouteWithChildren
   '/_app/foundation/bible/$chapter': typeof AppFoundationBibleChapterRoute
+  '/_app/foundation/bible/': typeof AppFoundationBibleIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -166,8 +166,8 @@ export interface FileRouteTypes {
     | '/projects'
     | '/security'
     | '/settings'
-    | '/foundation/bible'
     | '/foundation/bible/$chapter'
+    | '/foundation/bible/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/ai-center'
@@ -182,8 +182,8 @@ export interface FileRouteTypes {
     | '/security'
     | '/settings'
     | '/'
-    | '/foundation/bible'
     | '/foundation/bible/$chapter'
+    | '/foundation/bible'
   id:
     | '__root__'
     | '/_app'
@@ -199,8 +199,8 @@ export interface FileRouteTypes {
     | '/_app/security'
     | '/_app/settings'
     | '/_app/'
-    | '/_app/foundation/bible'
     | '/_app/foundation/bible/$chapter'
+    | '/_app/foundation/bible/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -300,40 +300,31 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAiCenterRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/foundation/bible': {
-      id: '/_app/foundation/bible'
+    '/_app/foundation/bible/': {
+      id: '/_app/foundation/bible/'
       path: '/bible'
-      fullPath: '/foundation/bible'
-      preLoaderRoute: typeof AppFoundationBibleRouteImport
+      fullPath: '/foundation/bible/'
+      preLoaderRoute: typeof AppFoundationBibleIndexRouteImport
       parentRoute: typeof AppFoundationRoute
     }
     '/_app/foundation/bible/$chapter': {
       id: '/_app/foundation/bible/$chapter'
-      path: '/$chapter'
+      path: '/bible/$chapter'
       fullPath: '/foundation/bible/$chapter'
       preLoaderRoute: typeof AppFoundationBibleChapterRouteImport
-      parentRoute: typeof AppFoundationBibleRoute
+      parentRoute: typeof AppFoundationRoute
     }
   }
 }
 
-interface AppFoundationBibleRouteChildren {
-  AppFoundationBibleChapterRoute: typeof AppFoundationBibleChapterRoute
-}
-
-const AppFoundationBibleRouteChildren: AppFoundationBibleRouteChildren = {
-  AppFoundationBibleChapterRoute: AppFoundationBibleChapterRoute,
-}
-
-const AppFoundationBibleRouteWithChildren =
-  AppFoundationBibleRoute._addFileChildren(AppFoundationBibleRouteChildren)
-
 interface AppFoundationRouteChildren {
-  AppFoundationBibleRoute: typeof AppFoundationBibleRouteWithChildren
+  AppFoundationBibleChapterRoute: typeof AppFoundationBibleChapterRoute
+  AppFoundationBibleIndexRoute: typeof AppFoundationBibleIndexRoute
 }
 
 const AppFoundationRouteChildren: AppFoundationRouteChildren = {
-  AppFoundationBibleRoute: AppFoundationBibleRouteWithChildren,
+  AppFoundationBibleChapterRoute: AppFoundationBibleChapterRoute,
+  AppFoundationBibleIndexRoute: AppFoundationBibleIndexRoute,
 }
 
 const AppFoundationRouteWithChildren = AppFoundationRoute._addFileChildren(

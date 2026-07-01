@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { EnergyLine, GlassCard } from "@/components/hn/primitives";
 import { HN_BIBLE_CHAPTERS, HN_BIBLE_PREAMBLE, HN_BIBLE_RULES } from "@/lib/hn/bible";
 
-export const Route = createFileRoute("/_app/foundation/bible")({
+export const Route = createFileRoute("/_app/foundation/bible/")({
   head: () => ({
     meta: [
       { title: "Architecture Bible · HN Foundation" },
