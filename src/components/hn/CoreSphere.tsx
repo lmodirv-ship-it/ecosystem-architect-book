@@ -250,6 +250,69 @@ export function CoreSphere({ open, onClose }: { open: boolean; onClose: () => vo
             </div>
           </motion.div>
 
+          {/* Loading overlay */}
+          <AnimatePresence>
+            {loading && (
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 8 }}
+                className="absolute bottom-24 left-1/2 z-20 w-[320px] -translate-x-1/2 rounded-2xl hn-glass-strong ring-1 ring-white/10 p-4"
+                dir="rtl"
+              >
+                <div className="flex items-center gap-3">
+                  <Loader2 className="h-4 w-4 animate-spin text-violet" />
+                  <div className="text-xs text-foreground/90">
+                    جارٍ فتح <span className="font-semibold">{loading.node.name}</span>…
+                  </div>
+                </div>
+                <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-white/5">
+                  <motion.div
+                    className="h-full bg-gradient-to-r from-violet via-sky to-cyan"
+                    animate={{ width: `${loading.progress}%` }}
+                    transition={{ ease: "easeOut", duration: 0.2 }}
+                  />
+                </div>
+                <div className="mt-2 flex gap-2">
+                  <div className="h-2 flex-1 animate-pulse rounded bg-white/5" />
+                  <div className="h-2 w-16 animate-pulse rounded bg-white/5" />
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Error toast */}
+          <AnimatePresence>
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 8 }}
+                className="absolute bottom-24 left-1/2 z-20 w-[340px] -translate-x-1/2 rounded-2xl hn-glass-strong ring-1 ring-rose/40 p-4"
+                dir="rtl"
+                role="alert"
+              >
+                <div className="flex items-start gap-3">
+                  <AlertTriangle className="mt-0.5 h-4 w-4 text-rose" />
+                  <div className="flex-1">
+                    <div className="text-xs font-semibold text-rose">
+                      فشل فتح {error.node.name}
+                    </div>
+                    <div className="mt-0.5 text-[11px] text-foreground/70">
+                      {error.message}
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => enterNode(error.node)}
+                    className="rounded-md bg-white/5 px-2 py-1 text-[11px] font-medium text-foreground/90 hover:bg-white/10"
+                  >
+                    إعادة المحاولة
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           {/* Footer tagline */}
           <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-center">
             <div className="font-display text-[11px] uppercase tracking-[0.35em] text-muted-foreground/80">
