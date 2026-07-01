@@ -17,11 +17,14 @@ import { Route as AppProjectsRouteImport } from './routes/_app.projects'
 import { Route as AppNawatRouteImport } from './routes/_app.nawat'
 import { Route as AppFoundationRouteImport } from './routes/_app.foundation'
 import { Route as AppDatabaseRouteImport } from './routes/_app.database'
+import { Route as AppCoreRouteImport } from './routes/_app.core'
 import { Route as AppCloudRouteImport } from './routes/_app.cloud'
 import { Route as AppAutomationRouteImport } from './routes/_app.automation'
 import { Route as AppApplicationsRouteImport } from './routes/_app.applications'
 import { Route as AppAnalyticsRouteImport } from './routes/_app.analytics'
 import { Route as AppAiCenterRouteImport } from './routes/_app.ai-center'
+import { Route as AppBuildersIndexRouteImport } from './routes/_app.builders.index'
+import { Route as AppBuildersBuilderRouteImport } from './routes/_app.builders.$builder'
 import { Route as AppFoundationBibleIndexRouteImport } from './routes/_app.foundation.bible.index'
 import { Route as AppFoundationBibleChapterRouteImport } from './routes/_app.foundation.bible.$chapter'
 
@@ -64,6 +67,11 @@ const AppDatabaseRoute = AppDatabaseRouteImport.update({
   path: '/database',
   getParentRoute: () => AppRoute,
 } as any)
+const AppCoreRoute = AppCoreRouteImport.update({
+  id: '/core',
+  path: '/core',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppCloudRoute = AppCloudRouteImport.update({
   id: '/cloud',
   path: '/cloud',
@@ -89,6 +97,16 @@ const AppAiCenterRoute = AppAiCenterRouteImport.update({
   path: '/ai-center',
   getParentRoute: () => AppRoute,
 } as any)
+const AppBuildersIndexRoute = AppBuildersIndexRouteImport.update({
+  id: '/builders/',
+  path: '/builders/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppBuildersBuilderRoute = AppBuildersBuilderRouteImport.update({
+  id: '/builders/$builder',
+  path: '/builders/$builder',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppFoundationBibleIndexRoute = AppFoundationBibleIndexRouteImport.update({
   id: '/bible/',
   path: '/bible/',
@@ -108,12 +126,15 @@ export interface FileRoutesByFullPath {
   '/applications': typeof AppApplicationsRoute
   '/automation': typeof AppAutomationRoute
   '/cloud': typeof AppCloudRoute
+  '/core': typeof AppCoreRoute
   '/database': typeof AppDatabaseRoute
   '/foundation': typeof AppFoundationRouteWithChildren
   '/nawat': typeof AppNawatRoute
   '/projects': typeof AppProjectsRoute
   '/security': typeof AppSecurityRoute
   '/settings': typeof AppSettingsRoute
+  '/builders/$builder': typeof AppBuildersBuilderRoute
+  '/builders/': typeof AppBuildersIndexRoute
   '/foundation/bible/$chapter': typeof AppFoundationBibleChapterRoute
   '/foundation/bible/': typeof AppFoundationBibleIndexRoute
 }
@@ -123,6 +144,7 @@ export interface FileRoutesByTo {
   '/applications': typeof AppApplicationsRoute
   '/automation': typeof AppAutomationRoute
   '/cloud': typeof AppCloudRoute
+  '/core': typeof AppCoreRoute
   '/database': typeof AppDatabaseRoute
   '/foundation': typeof AppFoundationRouteWithChildren
   '/nawat': typeof AppNawatRoute
@@ -130,6 +152,8 @@ export interface FileRoutesByTo {
   '/security': typeof AppSecurityRoute
   '/settings': typeof AppSettingsRoute
   '/': typeof AppIndexRoute
+  '/builders/$builder': typeof AppBuildersBuilderRoute
+  '/builders': typeof AppBuildersIndexRoute
   '/foundation/bible/$chapter': typeof AppFoundationBibleChapterRoute
   '/foundation/bible': typeof AppFoundationBibleIndexRoute
 }
@@ -141,6 +165,7 @@ export interface FileRoutesById {
   '/_app/applications': typeof AppApplicationsRoute
   '/_app/automation': typeof AppAutomationRoute
   '/_app/cloud': typeof AppCloudRoute
+  '/_app/core': typeof AppCoreRoute
   '/_app/database': typeof AppDatabaseRoute
   '/_app/foundation': typeof AppFoundationRouteWithChildren
   '/_app/nawat': typeof AppNawatRoute
@@ -148,6 +173,8 @@ export interface FileRoutesById {
   '/_app/security': typeof AppSecurityRoute
   '/_app/settings': typeof AppSettingsRoute
   '/_app/': typeof AppIndexRoute
+  '/_app/builders/$builder': typeof AppBuildersBuilderRoute
+  '/_app/builders/': typeof AppBuildersIndexRoute
   '/_app/foundation/bible/$chapter': typeof AppFoundationBibleChapterRoute
   '/_app/foundation/bible/': typeof AppFoundationBibleIndexRoute
 }
@@ -160,12 +187,15 @@ export interface FileRouteTypes {
     | '/applications'
     | '/automation'
     | '/cloud'
+    | '/core'
     | '/database'
     | '/foundation'
     | '/nawat'
     | '/projects'
     | '/security'
     | '/settings'
+    | '/builders/$builder'
+    | '/builders/'
     | '/foundation/bible/$chapter'
     | '/foundation/bible/'
   fileRoutesByTo: FileRoutesByTo
@@ -175,6 +205,7 @@ export interface FileRouteTypes {
     | '/applications'
     | '/automation'
     | '/cloud'
+    | '/core'
     | '/database'
     | '/foundation'
     | '/nawat'
@@ -182,6 +213,8 @@ export interface FileRouteTypes {
     | '/security'
     | '/settings'
     | '/'
+    | '/builders/$builder'
+    | '/builders'
     | '/foundation/bible/$chapter'
     | '/foundation/bible'
   id:
@@ -192,6 +225,7 @@ export interface FileRouteTypes {
     | '/_app/applications'
     | '/_app/automation'
     | '/_app/cloud'
+    | '/_app/core'
     | '/_app/database'
     | '/_app/foundation'
     | '/_app/nawat'
@@ -199,6 +233,8 @@ export interface FileRouteTypes {
     | '/_app/security'
     | '/_app/settings'
     | '/_app/'
+    | '/_app/builders/$builder'
+    | '/_app/builders/'
     | '/_app/foundation/bible/$chapter'
     | '/_app/foundation/bible/'
   fileRoutesById: FileRoutesById
@@ -265,6 +301,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDatabaseRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/core': {
+      id: '/_app/core'
+      path: '/core'
+      fullPath: '/core'
+      preLoaderRoute: typeof AppCoreRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/cloud': {
       id: '/_app/cloud'
       path: '/cloud'
@@ -298,6 +341,20 @@ declare module '@tanstack/react-router' {
       path: '/ai-center'
       fullPath: '/ai-center'
       preLoaderRoute: typeof AppAiCenterRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/builders/': {
+      id: '/_app/builders/'
+      path: '/builders'
+      fullPath: '/builders/'
+      preLoaderRoute: typeof AppBuildersIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/builders/$builder': {
+      id: '/_app/builders/$builder'
+      path: '/builders/$builder'
+      fullPath: '/builders/$builder'
+      preLoaderRoute: typeof AppBuildersBuilderRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/foundation/bible/': {
@@ -337,6 +394,7 @@ interface AppRouteChildren {
   AppApplicationsRoute: typeof AppApplicationsRoute
   AppAutomationRoute: typeof AppAutomationRoute
   AppCloudRoute: typeof AppCloudRoute
+  AppCoreRoute: typeof AppCoreRoute
   AppDatabaseRoute: typeof AppDatabaseRoute
   AppFoundationRoute: typeof AppFoundationRouteWithChildren
   AppNawatRoute: typeof AppNawatRoute
@@ -344,6 +402,8 @@ interface AppRouteChildren {
   AppSecurityRoute: typeof AppSecurityRoute
   AppSettingsRoute: typeof AppSettingsRoute
   AppIndexRoute: typeof AppIndexRoute
+  AppBuildersBuilderRoute: typeof AppBuildersBuilderRoute
+  AppBuildersIndexRoute: typeof AppBuildersIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
@@ -352,6 +412,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppApplicationsRoute: AppApplicationsRoute,
   AppAutomationRoute: AppAutomationRoute,
   AppCloudRoute: AppCloudRoute,
+  AppCoreRoute: AppCoreRoute,
   AppDatabaseRoute: AppDatabaseRoute,
   AppFoundationRoute: AppFoundationRouteWithChildren,
   AppNawatRoute: AppNawatRoute,
@@ -359,6 +420,8 @@ const AppRouteChildren: AppRouteChildren = {
   AppSecurityRoute: AppSecurityRoute,
   AppSettingsRoute: AppSettingsRoute,
   AppIndexRoute: AppIndexRoute,
+  AppBuildersBuilderRoute: AppBuildersBuilderRoute,
+  AppBuildersIndexRoute: AppBuildersIndexRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
@@ -369,13 +432,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
