@@ -41,9 +41,11 @@ export const HN_APPS: HNApp[] = [
   { id: "add", name: "Add New", tagline: "", icon: Plus, tone: "violet", href: "/applications" },
 ];
 
+import { HN_ECOSYSTEM_STATS } from "./ecosystem";
+
 export const HN_STATS = {
-  totalApps: 12,
-  activeProjects: 24,
+  totalApps: HN_ECOSYSTEM_STATS.uniqueProperties,
+  activeProjects: HN_ECOSYSTEM_STATS.rootDomains,
   aiAgents: 18,
   databases: 8,
   uptime: "99.99%",
