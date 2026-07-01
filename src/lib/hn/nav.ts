@@ -11,6 +11,8 @@ import {
   BookOpen,
   Landmark,
   Settings,
+  Layers,
+  Sparkles,
 } from "lucide-react";
 
 export type HNNavItem = {
@@ -21,6 +23,8 @@ export type HNNavItem = {
 
 export const HN_NAV: HNNavItem[] = [
   { title: "Dashboard", to: "/", icon: LayoutDashboard },
+  { title: "HN Core", to: "/core", icon: Sparkles },
+  { title: "Builders", to: "/builders", icon: Layers },
   { title: "Applications", to: "/applications", icon: Blocks },
   { title: "AI Center", to: "/ai-center", icon: BrainCircuit },
   { title: "Projects", to: "/projects", icon: FolderKanban },
