@@ -36,10 +36,51 @@ const RADIUS = 170;
 
 /** Draggable 3D sphere modal for HN Core. Rotate with pointer, click any node to enter. */
 export function CoreSphere({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const navigate = useNavigate();
   const [rot, setRot] = useState({ x: -15, y: 0 });
+  const [loading, setLoading] = useState<null | { node: Node; progress: number }>(null);
+  const [error, setError] = useState<null | { node: Node; message: string }>(null);
   const dragging = useRef(false);
   const last = useRef({ x: 0, y: 0 });
   const raf = useRef<number | null>(null);
+
+  // Reset loading/error when modal closes
+  useEffect(() => {
+    if (!open) {
+      setLoading(null);
+      setError(null);
+    }
+  }, [open]);
+
+  // Simulated progress + navigate
+  const enterNode = async (node: Node) => {
+    setError(null);
+    setLoading({ node, progress: 0 });
+    let p = 0;
+    const tick = window.setInterval(() => {
+      p = Math.min(90, p + 8 + Math.random() * 10);
+      setLoading((cur) => (cur ? { ...cur, progress: p } : cur));
+    }, 90);
+    try {
+      // Small artificial delay for the transition to be perceivable
+      await new Promise((r) => setTimeout(r, 450));
+      await navigate({ to: node.href });
+      window.clearInterval(tick);
+      setLoading((cur) => (cur ? { ...cur, progress: 100 } : cur));
+      // Close after navigation
+      setTimeout(() => {
+        setLoading(null);
+        onClose();
+      }, 180);
+    } catch (err) {
+      window.clearInterval(tick);
+      setLoading(null);
+      setError({
+        node,
+        message: err instanceof Error ? err.message : "تعذّر فتح الصفحة. حاول مرة أخرى.",
+      });
+    }
+  };
 
   // Auto-rotate when idle
   useEffect(() => {
