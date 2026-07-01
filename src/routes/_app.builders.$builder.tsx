@@ -63,11 +63,16 @@ function BuilderPage() {
               </p>
             </div>
           </div>
-          <button className="inline-flex items-center gap-2 self-start rounded-xl bg-gradient-to-r from-violet to-sky px-4 py-2.5 text-sm font-medium text-primary-foreground shadow-lg shadow-violet/30 hover:brightness-110">
+          <button
+            onClick={() => setOpen(true)}
+            className="inline-flex items-center gap-2 self-start rounded-xl bg-gradient-to-r from-violet to-sky px-4 py-2.5 text-sm font-medium text-primary-foreground shadow-lg shadow-violet/30 hover:brightness-110"
+          >
             <Rocket className="h-4 w-4" /> Launch Builder
           </button>
         </div>
       </GlassCard>
+
+      <CreateProjectDialog open={open} onClose={() => setOpen(false)} builder={b.slug} />
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
         <GlassCard className="p-5 md:p-6">
