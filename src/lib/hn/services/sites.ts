@@ -78,7 +78,7 @@ export async function seedSitesFromEcosystem(): Promise<{ inserted: number }> {
       category: group?.category ?? "brand",
       app_type: catMeta?.label ?? null,
       status: "unknown" as const,
-      metadata: { subdomain: p.subdomain, root: p.root },
+      metadata: { subdomain: p.subdomain, root: p.root } as never,
     };
   });
 
