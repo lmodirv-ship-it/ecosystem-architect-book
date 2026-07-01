@@ -5,19 +5,18 @@ import { HN_BUILDER_BY_SLUG, HN_BUILDERS } from "@/lib/hn/builders";
 
 export const Route = createFileRoute("/_app/builders/$builder")({
   loader: ({ params }) => {
-    const b = HN_BUILDER_BY_SLUG[params.builder];
-    if (!b) throw notFound();
-    return { builder: b };
+    if (!HN_BUILDER_BY_SLUG[params.builder]) throw notFound();
+    return { slug: params.builder };
   },
-  head: ({ loaderData }) => ({
-    meta: [
-      { title: `${loaderData?.builder.name ?? "Builder"} · HN Platform` },
-      {
-        name: "description",
-        content: loaderData?.builder.description ?? "HN Builder",
-      },
-    ],
-  }),
+  head: ({ params }) => {
+    const b = HN_BUILDER_BY_SLUG[params.builder];
+    return {
+      meta: [
+        { title: `${b?.name ?? "Builder"} · HN Platform` },
+        { name: "description", content: b?.description ?? "HN Builder" },
+      ],
+    };
+  },
   notFoundComponent: () => (
     <GlassCard className="p-10 text-center text-sm text-muted-foreground">
       Builder not found. <Link to="/builders" className="text-violet">Back to Builders</Link>
@@ -32,7 +31,9 @@ export const Route = createFileRoute("/_app/builders/$builder")({
 });
 
 function BuilderPage() {
-  const { builder: b } = Route.useLoaderData();
+  const { slug } = Route.useLoaderData();
+  const b = HN_BUILDER_BY_SLUG[slug];
+  if (!b) return null;
   return (
     <div className="space-y-6">
       <Link
