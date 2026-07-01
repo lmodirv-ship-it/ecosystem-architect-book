@@ -70,7 +70,7 @@ function BuilderPage() {
           <h2 className="font-display text-lg font-semibold text-foreground">Capabilities</h2>
           <EnergyLine className="my-4" />
           <ul className="grid gap-2 sm:grid-cols-2">
-            {b.items.map((it) => (
+            {b.items.map((it: string) => (
               <li
                 key={it}
                 className="flex items-center gap-2 rounded-lg hn-glass px-3 py-2 text-sm text-foreground/90"
