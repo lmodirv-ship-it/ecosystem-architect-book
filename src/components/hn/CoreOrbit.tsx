@@ -275,6 +275,8 @@ export function CoreOrbit() {
           قلب واحد… ومنظومة لا حدود لها
         </div>
       </div>
+
+      <CoreSphere open={sphereOpen} onClose={() => setSphereOpen(false)} />
     </div>
   );
 }
