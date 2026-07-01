@@ -1,3 +1,15 @@
-# Chapter 12 — Governance
+# Chapter 12 — Governance (الحوكمة)
 
-_To be authored, chapter by chapter, per the Architecture Bible plan._
+> كيف تُعتمد القرارات، الميزات، التصاميم، التحديثات، والكود.
+
+## قرارات معماريّة
+
+كل قرار مهم يوثَّق كـ ADR (Architecture Decision Record) داخل Nawat.
+
+## مراجعة الكود
+
+لا دمج بدون مراجعة. HN AI Reviewer يفحص أولاً، ثم مراجع بشري.
+
+## الميزات
+
+كل ميزة تمرّ بـ: اقتراح → موافقة → تصميم → تنفيذ → قياس.

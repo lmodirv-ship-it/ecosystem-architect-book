@@ -1,3 +1,15 @@
-# Chapter 13 — Knowledge
+# Chapter 13 — Knowledge (المعرفة)
 
-_To be authored, chapter by chapter, per the Architecture Bible plan._
+> كيف تُخزَّن المعرفة، تُربط، تُبحث، وكيف ترتبط بـ HN Nawat.
+
+## المخزن
+
+knowledge_nodes بروابط متعدّدة (WikiLinks). كل عقدة نوعها، مصدرها، وسياقها.
+
+## البحث
+
+بحث نصّي + بحث دلالي (embeddings). النتائج تُظهر السياق لا الأسطر فقط.
+
+## الربط مع Nawat
+
+Nawat مصدر الحقيقة. Platform يقرأ ويكتب عبر واجهة موحّدة.

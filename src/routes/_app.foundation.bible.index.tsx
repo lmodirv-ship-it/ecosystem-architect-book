@@ -1,8 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { EnergyLine, GlassCard } from "@/components/hn/primitives";
 import { HN_BIBLE_CHAPTERS, HN_BIBLE_PREAMBLE, HN_BIBLE_RULES } from "@/lib/hn/bible";
 
-export const Route = createFileRoute("/_app/foundation/bible")({
+export const Route = createFileRoute("/_app/foundation/bible/")({
   head: () => ({
     meta: [
       { title: "Architecture Bible · HN Foundation" },
@@ -39,16 +39,25 @@ function BiblePage() {
         <EnergyLine className="my-4" />
         <ol className="grid gap-3 md:grid-cols-2">
           {HN_BIBLE_CHAPTERS.map((c) => (
-            <li key={c.n} className="rounded-xl hn-glass p-4">
-              <div className="text-[11px] font-mono text-violet">
-                Chapter {c.n}
-              </div>
-              <div className="font-display text-sm font-semibold text-foreground">
-                {c.title}
-              </div>
-              <div className="mt-1 text-xs text-muted-foreground">
-                {c.summary}
-              </div>
+            <li key={c.n}>
+              <Link
+                to="/foundation/bible/$chapter"
+                params={{ chapter: c.slug }}
+                className="block rounded-xl hn-glass p-4 transition hover:ring-1 hover:ring-violet/40"
+              >
+                <div className="text-[11px] font-mono text-violet">
+                  Chapter {c.n}
+                </div>
+                <div className="font-display text-sm font-semibold text-foreground">
+                  {c.title}{" "}
+                  <span className="text-muted-foreground">
+                    · {c.arabicTitle}
+                  </span>
+                </div>
+                <div className="mt-1 text-xs text-muted-foreground">
+                  {c.summary}
+                </div>
+              </Link>
             </li>
           ))}
         </ol>

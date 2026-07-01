@@ -1,3 +1,19 @@
-# Chapter 07 — User Experience
+# Chapter 07 — User Experience (تجربة المستخدم)
 
-_To be authored, chapter by chapter, per the Architecture Bible plan._
+> التنقّل، البحث، فتح مشروع، الحركة، الرسائل، الإحساس.
+
+## التنقّل
+
+قائمة جانبية ثابتة + شريط علوي + Command Palette (⌘K) في كل مكان.
+
+## الحركة
+
+Framer Motion. حركات هادئة (200–400ms)، Easing طبيعي، احترام prefers-reduced-motion.
+
+## الحالة الفارغة
+
+لا شاشة فارغة. كل صفحة تُخبر ماذا تفعل ولماذا وكيف تبدأ.
+
+## الرسائل
+
+لهجة واثقة موجزة. لا اعتذارات. لا مصطلحات تقنية للمستخدم النهائي.
