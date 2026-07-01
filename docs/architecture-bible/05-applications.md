@@ -1,3 +1,19 @@
-# Chapter 05 — Applications
+# Chapter 05 — Applications (التطبيقات)
 
-_To be authored, chapter by chapter, per the Architecture Bible plan._
+> دور كل تطبيق، البيانات التي يستهلكها وينتجها، وعلاقاته بالبقيّة.
+
+## HN AI
+
+طبقة التفكير. تستهلك السياق من Nawat، تُنتج اقتراحات وتحليلات وقرارات.
+
+## HN Builder
+
+أداة توليد التطبيقات داخل Platform. تلتزم بـ Design Language و Bible.
+
+## HN Nawat
+
+الذاكرة طويلة الأمد. مصدر الحقيقة للمعرفة والقرارات.
+
+## HN Cloud / Analytics / Security
+
+خدمات أفقيّة تُقدَّم لكل التطبيقات بواجهة موحّدة.

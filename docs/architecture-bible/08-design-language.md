@@ -1,3 +1,19 @@
-# Chapter 08 — Design Language
+# Chapter 08 — Design Language (لغة التصميم)
 
-_To be authored, chapter by chapter, per the Architecture Bible plan._
+> زجاج، ضباب، إضاءة، جسيمات، حركة، خطوط، بطاقات، انتقالات، وصول، داكن وفاتح.
+
+## الأساس
+
+خلفية كونية عميقة، أسطح زجاجيّة (glass) مع Backdrop Blur، حواف رفيعة مُضيئة.
+
+## الألوان
+
+Violet · Cyan · Mint · Amber · Rose · Sky. تُستخدم كإشارات دلاليّة لا كزينة.
+
+## الخطوط
+
+Space Grotesk للعناوين، Inter للنصوص. أبداً لا Inter/Poppins افتراضيّة معاً.
+
+## الوصول
+
+تباين AA على الأقل، تركيز واضح على العناصر، دعم لوحة المفاتيح كامل.

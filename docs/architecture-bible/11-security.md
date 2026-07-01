@@ -1,3 +1,19 @@
-# Chapter 11 — Security
+# Chapter 11 — Security (الأمن)
 
-_To be authored, chapter by chapter, per the Architecture Bible plan._
+> الهويّة، المصادقة، التفويض، التشفير، التدقيق، الأسرار، الطوارئ.
+
+## Auth
+
+Lovable Cloud Auth. جلسات آمنة، تدوير رموز، حماية من CSRF/XSS.
+
+## AuthZ
+
+RLS على كل جدول، وأدوار عبر has_role. لا فحص أدوار من الواجهة فقط.
+
+## Secrets
+
+أسرار في مدير الأسرار فقط. أبداً لا في الكود أو الـ repo.
+
+## Audit
+
+audit_logs غير قابل للتعديل. كل عملية حساسة تُسجَّل.

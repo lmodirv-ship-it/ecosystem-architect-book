@@ -1,3 +1,15 @@
-# Chapter 10 — Automation
+# Chapter 10 — Automation (الأتمتة)
 
-_To be authored, chapter by chapter, per the Architecture Bible plan._
+> النشر، النسخ الاحتياطي، المراقبة، الاختبار، الفحص الأمني، الإشعارات، الجدولة.
+
+## CI/CD
+
+نشر تلقائي مع فحوصات جودة، وأمن، وتكامل قبل كل إصدار.
+
+## Schedulers
+
+pg_cron داخل Cloud للمهام الدورية. كل مهمّة موثّقة ومصادر خطئها معروفة.
+
+## AI Tasks
+
+مهام خلفيّة يشغّلها HN AI (تلخيص، تصنيف، مراجعة) بجدول أسبقية.
