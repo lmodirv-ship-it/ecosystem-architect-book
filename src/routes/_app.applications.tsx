@@ -151,13 +151,82 @@ function Chip({
   );
 }
 
+const TONE_CLASSES: Record<
+  HNDomainGroup["color"],
+  {
+    glow: string;
+    chipBg: string;
+    chipText: string;
+    chipRing: string;
+    dot: string;
+    dotShadow: string;
+    text: string;
+  }
+> = {
+  violet: {
+    glow: "bg-violet/20",
+    chipBg: "bg-violet/15",
+    chipText: "text-violet",
+    chipRing: "ring-violet/30",
+    dot: "bg-violet",
+    dotShadow: "shadow-violet/60",
+    text: "text-violet",
+  },
+  cyan: {
+    glow: "bg-cyan/20",
+    chipBg: "bg-cyan/15",
+    chipText: "text-cyan",
+    chipRing: "ring-cyan/30",
+    dot: "bg-cyan",
+    dotShadow: "shadow-cyan/60",
+    text: "text-cyan",
+  },
+  mint: {
+    glow: "bg-mint/20",
+    chipBg: "bg-mint/15",
+    chipText: "text-mint",
+    chipRing: "ring-mint/30",
+    dot: "bg-mint",
+    dotShadow: "shadow-mint/60",
+    text: "text-mint",
+  },
+  amber: {
+    glow: "bg-amber/20",
+    chipBg: "bg-amber/15",
+    chipText: "text-amber",
+    chipRing: "ring-amber/30",
+    dot: "bg-amber",
+    dotShadow: "shadow-amber/60",
+    text: "text-amber",
+  },
+  rose: {
+    glow: "bg-rose/20",
+    chipBg: "bg-rose/15",
+    chipText: "text-rose",
+    chipRing: "ring-rose/30",
+    dot: "bg-rose",
+    dotShadow: "shadow-rose/60",
+    text: "text-rose",
+  },
+  sky: {
+    glow: "bg-sky/20",
+    chipBg: "bg-sky/15",
+    chipText: "text-sky",
+    chipRing: "ring-sky/30",
+    dot: "bg-sky",
+    dotShadow: "shadow-sky/60",
+    text: "text-sky",
+  },
+};
+
 function DomainCard({ group }: { group: HNDomainGroup }) {
   const meta = HN_CATEGORY_META[group.category];
   const tone = group.color;
+  const t = TONE_CLASSES[tone];
   return (
     <GlassCard className="group relative overflow-hidden p-5">
       <div
-        className={`pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full blur-3xl bg-${tone}/20`}
+        className={`pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full blur-3xl ${t.glow}`}
       />
       <div className="relative flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">
@@ -170,7 +239,7 @@ function DomainCard({ group }: { group: HNDomainGroup }) {
           </div>
         </div>
         <span
-          className={`rounded-md bg-${tone}/15 px-2 py-0.5 text-[10px] uppercase tracking-widest text-${tone} ring-1 ring-${tone}/30`}
+          className={`rounded-md px-2 py-0.5 text-[10px] uppercase tracking-widest ring-1 ${t.chipBg} ${t.chipText} ${t.chipRing}`}
         >
           {meta.label}
         </span>
@@ -190,12 +259,12 @@ function DomainCard({ group }: { group: HNDomainGroup }) {
             >
               <span className="flex min-w-0 items-center gap-2">
                 <span
-                  className={`inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-${tone} shadow-[0_0_6px] shadow-${tone}/60`}
+                  className={`inline-block h-1.5 w-1.5 shrink-0 rounded-full shadow-[0_0_6px] ${t.dot} ${t.dotShadow}`}
                 />
                 <span className="truncate font-mono">
                   {p.subdomain ? (
                     <>
-                      <span className={`text-${tone}`}>{p.subdomain}</span>
+                      <span className={t.text}>{p.subdomain}</span>
                       <span className="text-muted-foreground">.{group.root}</span>
                     </>
                   ) : (
