@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppIndexRouteImport } from './routes/_app.index'
 import { Route as AppSettingsRouteImport } from './routes/_app.settings'
@@ -28,6 +29,11 @@ import { Route as AppBuildersBuilderRouteImport } from './routes/_app.builders.$
 import { Route as AppFoundationBibleIndexRouteImport } from './routes/_app.foundation.bible.index'
 import { Route as AppFoundationBibleChapterRouteImport } from './routes/_app.foundation.bible.$chapter'
 
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppRoute = AppRouteImport.update({
   id: '/_app',
   getParentRoute: () => rootRouteImport,
@@ -121,6 +127,7 @@ const AppFoundationBibleChapterRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
+  '/auth': typeof AuthRoute
   '/ai-center': typeof AppAiCenterRoute
   '/analytics': typeof AppAnalyticsRoute
   '/applications': typeof AppApplicationsRoute
@@ -139,6 +146,7 @@ export interface FileRoutesByFullPath {
   '/foundation/bible/': typeof AppFoundationBibleIndexRoute
 }
 export interface FileRoutesByTo {
+  '/auth': typeof AuthRoute
   '/ai-center': typeof AppAiCenterRoute
   '/analytics': typeof AppAnalyticsRoute
   '/applications': typeof AppApplicationsRoute
@@ -160,6 +168,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppRouteWithChildren
+  '/auth': typeof AuthRoute
   '/_app/ai-center': typeof AppAiCenterRoute
   '/_app/analytics': typeof AppAnalyticsRoute
   '/_app/applications': typeof AppApplicationsRoute
@@ -182,6 +191,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/auth'
     | '/ai-center'
     | '/analytics'
     | '/applications'
@@ -200,6 +210,7 @@ export interface FileRouteTypes {
     | '/foundation/bible/'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/auth'
     | '/ai-center'
     | '/analytics'
     | '/applications'
@@ -220,6 +231,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/_app'
+    | '/auth'
     | '/_app/ai-center'
     | '/_app/analytics'
     | '/_app/applications'
@@ -241,10 +253,18 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
+  AuthRoute: typeof AuthRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_app': {
       id: '/_app'
       path: ''
@@ -428,6 +448,7 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
+  AuthRoute: AuthRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
