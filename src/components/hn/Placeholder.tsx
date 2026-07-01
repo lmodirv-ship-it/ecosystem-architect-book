@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+
 import { EnergyLine, GlassCard, GlowIcon } from "@/components/hn/primitives";
 import type { LucideIcon } from "lucide-react";
 import type { Tone } from "@/components/hn/primitives";
@@ -68,9 +68,3 @@ export function HNPlaceholder({
   );
 }
 
-// Re-exported as a route only so this file is safely under src/routes but
-// does not itself claim a URL. The router treats files starting with an
-// underscore-prefixed segment as routes; we expose this only as a helper.
-export const Route = createFileRoute("/_app/_placeholder-helper" as never)({
-  component: () => null,
-});
