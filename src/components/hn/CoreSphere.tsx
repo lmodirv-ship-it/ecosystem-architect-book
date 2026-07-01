@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -9,6 +9,8 @@ import {
   Wrench,
   BarChart3,
   Sparkles,
+  AlertTriangle,
+  Loader2,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { TONE_TEXT, type Tone } from "@/components/hn/primitives";
@@ -34,10 +36,51 @@ const RADIUS = 170;
 
 /** Draggable 3D sphere modal for HN Core. Rotate with pointer, click any node to enter. */
 export function CoreSphere({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const navigate = useNavigate();
   const [rot, setRot] = useState({ x: -15, y: 0 });
+  const [loading, setLoading] = useState<null | { node: Node; progress: number }>(null);
+  const [error, setError] = useState<null | { node: Node; message: string }>(null);
   const dragging = useRef(false);
   const last = useRef({ x: 0, y: 0 });
   const raf = useRef<number | null>(null);
+
+  // Reset loading/error when modal closes
+  useEffect(() => {
+    if (!open) {
+      setLoading(null);
+      setError(null);
+    }
+  }, [open]);
+
+  // Simulated progress + navigate
+  const enterNode = async (node: Node) => {
+    setError(null);
+    setLoading({ node, progress: 0 });
+    let p = 0;
+    const tick = window.setInterval(() => {
+      p = Math.min(90, p + 8 + Math.random() * 10);
+      setLoading((cur) => (cur ? { ...cur, progress: p } : cur));
+    }, 90);
+    try {
+      // Small artificial delay for the transition to be perceivable
+      await new Promise((r) => setTimeout(r, 450));
+      await navigate({ to: node.href });
+      window.clearInterval(tick);
+      setLoading((cur) => (cur ? { ...cur, progress: 100 } : cur));
+      // Close after navigation
+      setTimeout(() => {
+        setLoading(null);
+        onClose();
+      }, 180);
+    } catch (err) {
+      window.clearInterval(tick);
+      setLoading(null);
+      setError({
+        node,
+        message: err instanceof Error ? err.message : "تعذّر فتح الصفحة. حاول مرة أخرى.",
+      });
+    }
+  };
 
   // Auto-rotate when idle
   useEffect(() => {
@@ -187,6 +230,9 @@ export function CoreSphere({ open, onClose }: { open: boolean; onClose: () => vo
                       y={y}
                       z={z}
                       counter={{ x: -rot.x, y: -rot.y }}
+                      onEnter={enterNode}
+                      busy={loading?.node.id === n.id}
+                      disabled={!!loading}
                     />
                   );
                 })}
@@ -203,6 +249,69 @@ export function CoreSphere({ open, onClose }: { open: boolean; onClose: () => vo
               </div>
             </div>
           </motion.div>
+
+          {/* Loading overlay */}
+          <AnimatePresence>
+            {loading && (
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 8 }}
+                className="absolute bottom-24 left-1/2 z-20 w-[320px] -translate-x-1/2 rounded-2xl hn-glass-strong ring-1 ring-white/10 p-4"
+                dir="rtl"
+              >
+                <div className="flex items-center gap-3">
+                  <Loader2 className="h-4 w-4 animate-spin text-violet" />
+                  <div className="text-xs text-foreground/90">
+                    جارٍ فتح <span className="font-semibold">{loading.node.name}</span>…
+                  </div>
+                </div>
+                <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-white/5">
+                  <motion.div
+                    className="h-full bg-gradient-to-r from-violet via-sky to-cyan"
+                    animate={{ width: `${loading.progress}%` }}
+                    transition={{ ease: "easeOut", duration: 0.2 }}
+                  />
+                </div>
+                <div className="mt-2 flex gap-2">
+                  <div className="h-2 flex-1 animate-pulse rounded bg-white/5" />
+                  <div className="h-2 w-16 animate-pulse rounded bg-white/5" />
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Error toast */}
+          <AnimatePresence>
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 8 }}
+                className="absolute bottom-24 left-1/2 z-20 w-[340px] -translate-x-1/2 rounded-2xl hn-glass-strong ring-1 ring-rose/40 p-4"
+                dir="rtl"
+                role="alert"
+              >
+                <div className="flex items-start gap-3">
+                  <AlertTriangle className="mt-0.5 h-4 w-4 text-rose" />
+                  <div className="flex-1">
+                    <div className="text-xs font-semibold text-rose">
+                      فشل فتح {error.node.name}
+                    </div>
+                    <div className="mt-0.5 text-[11px] text-foreground/70">
+                      {error.message}
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => enterNode(error.node)}
+                    className="rounded-md bg-white/5 px-2 py-1 text-[11px] font-medium text-foreground/90 hover:bg-white/10"
+                  >
+                    إعادة المحاولة
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Footer tagline */}
           <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-center">
@@ -225,12 +334,18 @@ function SphereNode({
   y,
   z,
   counter,
+  onEnter,
+  busy,
+  disabled,
 }: {
   node: Node;
   x: number;
   y: number;
   z: number;
   counter: { x: number; y: number };
+  onEnter: (node: Node) => void;
+  busy: boolean;
+  disabled: boolean;
 }) {
   const Icon = node.icon;
   return (
@@ -241,26 +356,35 @@ function SphereNode({
         transformStyle: "preserve-3d",
       }}
     >
-      {/* Counter-rotate so icons always face viewer */}
       <div
         style={{
           transform: `rotateY(${counter.y}deg) rotateX(${counter.x}deg)`,
           transformStyle: "preserve-3d",
         }}
       >
-        <Link
-          to={node.href}
-          className="group flex flex-col items-center"
+        <button
+          type="button"
+          disabled={disabled}
+          onClick={() => onEnter(node)}
           onPointerDown={(e) => e.stopPropagation()}
+          className="group flex flex-col items-center disabled:cursor-wait disabled:opacity-70"
+          aria-label={`Open ${node.name}`}
         >
           <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl hn-glass-strong ring-1 ring-white/15 transition-all duration-200 group-hover:scale-110 group-hover:ring-violet/60">
-            <Icon className={`h-7 w-7 ${TONE_TEXT[node.tone]}`} />
+            {busy ? (
+              <Loader2 className={`h-6 w-6 animate-spin ${TONE_TEXT[node.tone]}`} />
+            ) : (
+              <Icon className={`h-7 w-7 ${TONE_TEXT[node.tone]}`} />
+            )}
             <span className="pointer-events-none absolute -inset-2 rounded-3xl bg-violet/20 blur-xl opacity-0 transition-opacity group-hover:opacity-100" />
+            {busy && (
+              <span className="pointer-events-none absolute -inset-2 rounded-3xl bg-violet/30 blur-xl opacity-100" />
+            )}
           </div>
           <div className="mt-1.5 whitespace-nowrap rounded-md bg-background/70 px-2 py-0.5 text-[10px] font-medium text-foreground/90 backdrop-blur">
             {node.name}
           </div>
-        </Link>
+        </button>
       </div>
     </div>
   );
