@@ -26,6 +26,7 @@ import { CommandBar } from "@/components/hn/CommandBar";
 import { LiveHealth } from "@/components/hn/LiveHealth";
 import { Assistant } from "@/components/hn/Assistant";
 import { BootSequence } from "@/components/hn/BootSequence";
+import { OwnerDashboard } from "@/components/hn/dashboard/OwnerDashboard";
 
 export const Route = createFileRoute("/_app/")({
   head: () => ({
@@ -63,6 +64,11 @@ function Dashboard() {
           <LiveHealth />
           <Assistant />
         </div>
+      </div>
+
+      {/* Owner Dashboard — Real business KPIs backed by Supabase */}
+      <div className="mt-8">
+        <OwnerDashboard />
       </div>
     </>
   );
