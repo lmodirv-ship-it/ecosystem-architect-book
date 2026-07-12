@@ -17,7 +17,7 @@ export async function listSites(): Promise<SiteWithUptime[]> {
     .select("*")
     .order("name", { ascending: true });
   if (error) throw error;
-  return (data ?? []) as unknown as SiteRow[];
+  return (data ?? []) as unknown as SiteWithUptime[];
 }
 
 export async function countSites(): Promise<number> {
