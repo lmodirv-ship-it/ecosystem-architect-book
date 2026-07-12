@@ -1,101 +1,74 @@
-# HN Platform — Architecture Bible v1.0 · خطة التنفيذ
+# خطة التطوير الجادّة — HN Platform
 
-هذه خطة بناء **HN Platform** كنظام تشغيل رقمي (Digital Operating System) لمنظومة HN، مبنية على الوثيقة المرجعية التي شاركتها. سنعتمدها كـ **Single Source of Truth** داخل المشروع نفسه، ونبني على مراحل — لا في جلسة واحدة — كما اقترحت.
+## الوضع الحالي (تشخيص سريع)
+- **16 جدول** جاهز في Lovable Cloud مع RLS، لكن **كلها فارغة** (0 صفوف في كل جدول).
+- الواجهة كاملة (Dashboard, Sidebar, Sphere, Builders, Bible) لكن معظم الصفحات ما زالت Placeholders.
+- المصادقة تعمل، ولا يوجد مستخدم واحد مسجّل حتى الآن.
+- 141 موقع في `ecosystem.ts` غير مُستورد فعلياً إلى `sites`.
+- لا يوجد AI Gateway مربوط، ولا Automation، ولا Storage، ولا Edge Functions للـ health checks الحقيقية.
 
----
-
-## المبادئ الحاكمة (تُطبَّق في كل مرحلة)
-
-- Single Source of Truth للتصميم والبيانات والمنطق.
-- Reusable Components + Shared Services، لا تكرار.
-- HN Design Language موحّد (Glass / Blur / Lighting / Motion / Dark+Light).
-- كل تطبيق داخل HN Platform = وحدة مستقلة قابلة للتوسع.
-- الأداء والأمان قرار في كل خطوة، لا مرحلة لاحقة.
-- الوثيقة تعيش داخل المشروع ويقرأها الوكلاء قبل أي مهمة.
+## الفجوة الجوهرية
+المنصّة اليوم = **قشرة جميلة فوق قاعدة بيانات فارغة**. التطوير الجادّ = تحويلها إلى **نظام تشغيلي فعلي** يُدار من داخله.
 
 ---
 
-## المرحلة 0 — تثبيت الوثيقة داخل المشروع
+## المراحل (6 مراحل، كل مرحلة قابلة للتسليم مستقلّة)
 
-- إنشاء `docs/architecture-bible/` بداخله:
-  - `00-preamble.md` (المقدمة الرسمية + قواعد التنفيذ التي كتبتها)
-  - `01-philosophy.md` … `15-future.md` (هيكل الفصول الخمسة عشر، تُملأ فصلاً بعد فصل)
-  - `README.md` كفهرس ملاحي للوثيقة.
-- إنشاء صفحة داخل المنصة `/foundation/bible` تعرض الوثيقة بواجهة قراءة أنيقة (Markdown → UI)، لتصبح جزءاً من HN Platform نفسها.
-- تسجيل قواعد التنفيذ في ذاكرة المشروع (`mem://`) لتُطبَّق تلقائياً في كل جلسة.
+### المرحلة 1 — التأسيس التشغيلي (Foundations)
+- استيراد الـ141 موقع من `ecosystem.ts` إلى جدول `sites` تلقائياً عند أول دخول Admin.
+- **Edge Function** حقيقية لفحص الحالة (بدلاً من `no-cors` في المتصفح): تُشغَّل عبر `pg_cron` كل 5 دقائق، تكتب في `health_checks` وتحدّث `sites.status/latency/ssl_expires_at`.
+- صفحة `/applications` تعرض الحالة الحية + SSL + Uptime % آخر 24 ساعة.
+- Seed بيانات تجريبية واقعية (Demo Mode) للـDashboard حتى يرى المالك المنصّة تعمل قبل ربط مصادره.
 
-## المرحلة 1 — HN Design Language (الأساس البصري)
+### المرحلة 2 — HN Cloud + Storage + Deployments
+- تفعيل Storage buckets: `avatars`, `project-assets`, `site-backups`.
+- جدول `deployments` + صفحة `/cloud` تعرض النشر الفعلي (سجل، حالة، rollback).
+- ربط رفع صور الملف الشخصي والمشاريع بـStorage.
 
-- تعريف نظام تصميم كامل في `src/styles.css` باستخدام `oklch` وTokens دلالية:
-  - ألوان: خلفيات داكنة عميقة + Accents بنفسجي/سماوي/أخضر نيون (مطابق للـ Mockup).
-  - Gradients, Glass surfaces, Glow/Lighting, Shadows.
-  - Typography: عائلة عرض + عائلة نص (بدون Inter/Poppins الافتراضية).
-  - Motion tokens (durations, easings) لاستخدامها مع Framer Motion.
-- مكتبة primitives موحّدة: `GlassCard`, `GlowIcon`, `StatTile`, `AppTile`, `StatusDot`, `SectionHeader`, `EnergyLine`.
-- Dark Mode أولاً + Light Mode متكامل + Responsive.
+### المرحلة 3 — HN AI Center (المساعد الحقيقي)
+- ربط **Lovable AI Gateway** (Gemini افتراضياً) عبر `createServerFn`.
+- المساعد يقرأ Architecture Bible + بيانات المستخدم الحيّة كسياق.
+- 4 أوامر جاهزة: Create Project · Analyze Revenue · Generate Report · Health Check.
+- سجل محادثات في جدول `ai_conversations` + `ai_messages` (يُضاف في migration).
+- Streaming responses + Rate limiting.
 
-## المرحلة 2 — HN Core Shell (القلب التشغيلي)
+### المرحلة 4 — Builders الحقيقية
+- **Website Builder**: قوالب جاهزة → ينشئ مشروع + Site مربوط + Deployment أوّلي.
+- **Database Builder**: واجهة لإنشاء جداول داخل مشروع المستخدم (schema-per-project أو RLS-tenant).
+- **Application Builder**: Scaffolding لتطبيق داخلي (form + table + API) يظهر في `/applications`.
+- كل Builder يكتب Activity Log ويظهر في `Recent Projects`.
 
-- تخطيط رئيسي: Sidebar + Topbar + Content + Right Rail (كما في الصورة).
-- مكوّنات Shell قابلة لإعادة الاستخدام عبر كل التطبيقات الفرعية.
-- Routing عبر TanStack Router بملفات مستقلة لكل قسم (لا Hash anchors).
-- Command Palette (⌘K)، Notifications، Locale switcher، Theme switcher، Profile.
+### المرحلة 5 — Automation + Governance
+- جدول `automations` (trigger + action + schedule) + محرّك تنفيذ عبر Edge Function + pg_cron.
+- Automations جاهزة: تنبيه SSL قبل انتهاء 14 يوم، تنبيه Site down > 5 دقائق، تنبيه Payment failed، تقرير أسبوعي بالإيميل.
+- **Notifications** حقيقية (in-app + Email عبر Resend).
+- **Audit Log** موحّد لكل عمليات Admin.
+- User Management: دعوة أعضاء، تعيين أدوار (admin/editor/viewer)، صفحة `/settings/team`.
 
-## المرحلة 3 — Dashboard (الصفحة المعروضة في الصورة)
-
-- Welcome hero + إحصاءات (Total Apps / Active Projects / AI Agents / Databases / Uptime).
-- شبكة HN Applications (AI, Builder, Video, DB, Cloud, Store, Audit, Nawat, Foundation, Support, Analytics, + Add New).
-- System Status, AI Assistant panel, Recent Projects, System Activity, Statistics Overview.
-- HN Core Status widget في الشريط الجانبي.
-- كل البيانات تأتي من مصدر موحّد (Mock service الآن، Cloud لاحقاً).
-
-## المرحلة 4 — هياكل التطبيقات الفرعية
-
-إنشاء Routes وشِلْ فارغ لكل تطبيق مع نفس Design Language:
-`/applications`, `/ai-center`, `/projects`, `/database`, `/cloud`, `/automation`, `/analytics`, `/security`, `/nawat`, `/foundation`, `/settings`.
-كل صفحة = Placeholder احترافي جاهز للتعبئة في مراحل لاحقة، لا محتوى وهمي رخيص.
-
-## المرحلة 5 — Data Architecture (تفعيل Lovable Cloud)
-
-- تفعيل Cloud وتصميم Entities الأساسية من الفصل السادس: Users, Roles, Projects, Applications, Agents, Tasks, Events, Notifications, Logs, Documents, Knowledge, Secrets, Analytics.
-- RLS + Roles table منفصلة (`user_roles` + `has_role`) — لا roles على profiles.
-- Auth (تسجيل/دخول/خروج) مع صفحة `/auth`.
-
-## المرحلة 6 — HN AI Layer
-
-- ربط Lovable AI Gateway (Gemini افتراضياً) عبر `createServerFn`.
-- AI Assistant الحقيقي في الـ Dashboard: Create Project / Analyze Data / Generate Report / System Health Check.
-- قراءة Architecture Bible كسياق قبل أي مهمة (تُمرَّر كـ system context).
-
-## المرحلة 7+ — Automation · Security · Governance · Knowledge · Evolution · Future
-
-تُنفَّذ بنفس المنهج فصلاً بعد فصل، وفق ترتيب فصول الوثيقة.
+### المرحلة 6 — الجودة والإطلاق
+- **Security Scan** + معالجة كل التنبيهات (RLS, exposed columns, leaked passwords HIBP).
+- **SEO + Metadata** لكل صفحة عامة (og:image ديناميكي، sitemap، robots).
+- **Performance**: Lighthouse ≥ 90، صور مضغوطة، lazy loading، Suspense boundaries.
+- **Tests**: E2E عبر Playwright للمسارات الحرجة (auth, dashboard, import, create project).
+- **Docs**: تحديث Bible بما تم بناؤه فعلياً + دليل المستخدم النهائي.
+- **Publish** + Custom Domain.
 
 ---
 
-## نطاق هذه الجلسة (Deliverable الآن)
-
-للحفاظ على الجودة، سأنفذ في **هذه الدفعة** المراحل **0 → 3**:
-
-1. تركيب `docs/architecture-bible/` مع المقدمة الرسمية + قواعد التنفيذ + هيكل الفصول الخمسة عشر (كل فصل بملف يحوي عنوانه ونقاطه الرئيسية من الوثيقة، جاهز للتعميق لاحقاً).
-2. HN Design Language كامل في `styles.css` + primitives.
-3. HN Core Shell (Sidebar + Topbar + Right Rail + Layout Route).
-4. Dashboard كامل يطابق الصورة المرفقة بدقة (Hero, Stats, Applications grid, System Status, AI Assistant, Recent Projects, System Activity, Statistics Overview, Core Status, Footer).
-5. Routes فارغة (Placeholders راقية) لبقية أقسام Sidebar لتفادي روابط مكسورة.
-6. تحديث Metadata (title/description/og) لصفحة `HN Platform`.
-7. حفظ قواعد التنفيذ في `mem://` لتلتزم بها كل الجلسات القادمة.
-
-المراحل 4→7+ (Cloud, Auth, AI Gateway, باقي التطبيقات، فصول الوثيقة بتفصيلها الكامل) ننفذها في دفعات لاحقة — فصلاً بعد فصل — كما اقترحت تماماً.
+## قواعد تنفيذ ملزِمة (تُطبَّق في كل مرحلة)
+1. **لا Placeholder بعد اليوم** — أي صفحة تُلمس يجب أن تصبح وظيفية بالكامل قبل الانتقال.
+2. **لا بيانات ثابتة في TypeScript** لأي شيء قابل للتغيير — كل شيء في Cloud.
+3. كل Feature = Migration + Service + UI + Activity Log + اختبار يدوي موثّق.
+4. HN Design Language فقط (tokens دلالية، لا ألوان مباشرة).
+5. RLS + GRANT على كل جدول جديد، بلا استثناء.
+6. كل تغيير Backend يمرّ عبر `createServerFn` (ليس Edge Function) إلا للـ webhooks والـ cron.
 
 ---
 
-## Technical Notes
+## اقتراح الدفعة القادمة (لو وافقت)
+أنفّذ **المرحلة 1 كاملة** في دفعة واحدة:
+- استيراد الـ141 موقع + Edge Function للـhealth + pg_cron.
+- Demo seed للـDashboard.
+- `/applications` تعمل بالكامل بالبيانات الحيّة.
 
-- Stack: TanStack Start + React 19 + Tailwind v4 + Framer Motion + shadcn primitives (مُخصّصة بالكامل، بلا مظهر افتراضي).
-- Routing: ملفات مستقلة في `src/routes/` (لا `src/pages/`، لا hash anchors للتنقل الرئيسي).
-- Tokens دلالية فقط داخل المكوّنات (`bg-background`, `text-primary` …) — ممنوع hardcoded colors.
-- الوثيقة تُخدَّم كـ Markdown وتُعرض داخل `/foundation/bible` بمكوّن قارئ موحّد.
-- Metadata مخصّصة لكل Route (title/description/og/twitter).
-- لا محتوى Placeholder من قالب Lovable — الصفحة الرئيسية تصبح Dashboard الحقيقي.
-
-بعد موافقتك أبدأ التنفيذ مباشرة بالدفعة الأولى (المراحل 0→3)، ثم ننتقل لفصول الوثيقة والتطبيقات الفرعية واحداً تلو الآخر.
+هل أبدأ بالمرحلة 1، أم تفضّل ترتيباً مختلفاً (مثلاً AI Center أولاً)؟
