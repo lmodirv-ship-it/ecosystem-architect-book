@@ -72,7 +72,7 @@ function ApplicationsPage() {
     onError: (e: unknown) => toast.error(e instanceof Error ? e.message : "فشل الحذف"),
   });
 
-  const runCheck = async (site: SiteRow) => {
+  const runCheck = async (site: SiteWithUptime) => {
     setChecking((c) => ({ ...c, [site.id]: true }));
     try {
       const r = await checkSiteHealth(site);
