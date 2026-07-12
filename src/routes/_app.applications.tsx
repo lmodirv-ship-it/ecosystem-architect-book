@@ -19,13 +19,15 @@ import { toast } from "sonner";
 import { GlassCard, GlowIcon } from "@/components/hn/primitives";
 import {
   checkSiteHealth,
+  checkSitesBatch,
   deleteSite,
   listSites,
   seedSitesFromEcosystem,
+  type SiteWithUptime,
 } from "@/lib/hn/services/sites";
 import { useUserRoles } from "@/hooks/useUserRoles";
 import { HN_CATEGORY_META } from "@/lib/hn/ecosystem";
-import type { SiteRow, SiteStatus } from "@/lib/hn/db-types";
+import type { SiteStatus } from "@/lib/hn/db-types";
 
 export const Route = createFileRoute("/_app/applications")({
   ssr: false,
