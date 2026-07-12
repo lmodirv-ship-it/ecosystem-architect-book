@@ -345,8 +345,12 @@ function SiteCard({
         </span>
       </div>
 
-      <div className="mt-3 grid grid-cols-3 gap-2 text-[11px]">
+      <div className="mt-3 grid grid-cols-4 gap-2 text-[11px]">
         <Meta label="Latency" value={site.last_latency_ms ? `${site.last_latency_ms}ms` : "—"} />
+        <Meta
+          label="Uptime 24h"
+          value={site.uptime_24h_pct !== null ? `${site.uptime_24h_pct}%` : "—"}
+        />
         <Meta label="Category" value={catMeta?.label ?? site.category} />
         <Meta
           label="Checked"
