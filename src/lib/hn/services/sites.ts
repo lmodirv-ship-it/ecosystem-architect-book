@@ -6,9 +6,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { HN_ALL_PROPERTIES, HN_DOMAIN_GROUPS, HN_CATEGORY_META } from "@/lib/hn/ecosystem";
 import type { SiteRow, SiteStatus } from "@/lib/hn/db-types";
 
-export async function listSites(): Promise<SiteRow[]> {
+export type SiteWithUptime = SiteRow & {
+  uptime_24h_pct: number | null;
+  checks_24h: number;
+};
+
+export async function listSites(): Promise<SiteWithUptime[]> {
   const { data, error } = await supabase
-    .from("sites")
+    .from("sites_with_uptime" as never)
     .select("*")
     .order("name", { ascending: true });
   if (error) throw error;
