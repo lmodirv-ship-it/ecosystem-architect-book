@@ -88,23 +88,17 @@ function ApplicationsPage() {
   const runAllChecks = async () => {
     if (!sites) return;
     setBulkChecking(true);
-    const targets = filtered.slice(0, 20);
-    toast.info(`فحص ${targets.length} موقع…`);
-    // Concurrency of 5 to be gentle.
-    const queue = [...targets];
-    const workers = Array.from({ length: 5 }, async () => {
-      while (queue.length) {
-        const s = queue.shift();
-        if (!s) return;
-        try {
-          await checkSiteHealth(s);
-        } catch { /* per-site failures are recorded on the row itself */ }
-      }
-    });
-    await Promise.all(workers);
-    setBulkChecking(false);
-    toast.success("اكتمل الفحص");
-    qc.invalidateQueries({ queryKey: ["sites"] });
+    const targets = filtered.slice(0, 30);
+    toast.info(`فحص ${targets.length} موقع عبر الخادم…`);
+    try {
+      const r = await checkSitesBatch(targets.map((s) => s.id));
+      toast.success(`اكتمل فحص ${r.checked} موقع`);
+      qc.invalidateQueries({ queryKey: ["sites"] });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "فشل الفحص المجمّع");
+    } finally {
+      setBulkChecking(false);
+    }
   };
 
   const sites = sitesQ.data;
