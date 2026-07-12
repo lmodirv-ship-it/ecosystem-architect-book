@@ -799,6 +799,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      seed_demo_data: { Args: { _admin: string }; Returns: undefined }
       site_uptime_pct: {
         Args: { _hours?: number; _site_id: string }
         Returns: number
