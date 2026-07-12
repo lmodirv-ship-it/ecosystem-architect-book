@@ -19,13 +19,15 @@ import { toast } from "sonner";
 import { GlassCard, GlowIcon } from "@/components/hn/primitives";
 import {
   checkSiteHealth,
+  checkSitesBatch,
   deleteSite,
   listSites,
   seedSitesFromEcosystem,
+  type SiteWithUptime,
 } from "@/lib/hn/services/sites";
 import { useUserRoles } from "@/hooks/useUserRoles";
 import { HN_CATEGORY_META } from "@/lib/hn/ecosystem";
-import type { SiteRow, SiteStatus } from "@/lib/hn/db-types";
+import type { SiteStatus } from "@/lib/hn/db-types";
 
 export const Route = createFileRoute("/_app/applications")({
   ssr: false,
@@ -70,7 +72,7 @@ function ApplicationsPage() {
     onError: (e: unknown) => toast.error(e instanceof Error ? e.message : "فشل الحذف"),
   });
 
-  const runCheck = async (site: SiteRow) => {
+  const runCheck = async (site: SiteWithUptime) => {
     setChecking((c) => ({ ...c, [site.id]: true }));
     try {
       const r = await checkSiteHealth(site);
@@ -86,23 +88,17 @@ function ApplicationsPage() {
   const runAllChecks = async () => {
     if (!sites) return;
     setBulkChecking(true);
-    const targets = filtered.slice(0, 20);
-    toast.info(`فحص ${targets.length} موقع…`);
-    // Concurrency of 5 to be gentle.
-    const queue = [...targets];
-    const workers = Array.from({ length: 5 }, async () => {
-      while (queue.length) {
-        const s = queue.shift();
-        if (!s) return;
-        try {
-          await checkSiteHealth(s);
-        } catch { /* per-site failures are recorded on the row itself */ }
-      }
-    });
-    await Promise.all(workers);
-    setBulkChecking(false);
-    toast.success("اكتمل الفحص");
-    qc.invalidateQueries({ queryKey: ["sites"] });
+    const targets = filtered.slice(0, 30);
+    toast.info(`فحص ${targets.length} موقع عبر الخادم…`);
+    try {
+      const r = await checkSitesBatch(targets.map((s) => s.id));
+      toast.success(`اكتمل فحص ${r.checked} موقع`);
+      qc.invalidateQueries({ queryKey: ["sites"] });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "فشل الفحص المجمّع");
+    } finally {
+      setBulkChecking(false);
+    }
   };
 
   const sites = sitesQ.data;
@@ -313,13 +309,13 @@ function SiteCard({
   checking,
   canDelete,
 }: {
-  site: SiteRow;
+  site: SiteWithUptime;
   onCheck: () => void;
   onDelete: () => void;
   checking: boolean;
   canDelete: boolean;
 }) {
-  const tone = STATUS_TONE[site.status];
+  const tone = STATUS_TONE[site.status as SiteStatus];
   const catMeta = HN_CATEGORY_META[site.category as keyof typeof HN_CATEGORY_META];
   return (
     <GlassCard className="group relative overflow-hidden p-4">
@@ -349,8 +345,12 @@ function SiteCard({
         </span>
       </div>
 
-      <div className="mt-3 grid grid-cols-3 gap-2 text-[11px]">
+      <div className="mt-3 grid grid-cols-4 gap-2 text-[11px]">
         <Meta label="Latency" value={site.last_latency_ms ? `${site.last_latency_ms}ms` : "—"} />
+        <Meta
+          label="Uptime 24h"
+          value={site.uptime_24h_pct !== null ? `${site.uptime_24h_pct}%` : "—"}
+        />
         <Meta label="Category" value={catMeta?.label ?? site.category} />
         <Meta
           label="Checked"

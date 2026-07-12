@@ -27,6 +27,7 @@ import { Route as AppAiCenterRouteImport } from './routes/_app.ai-center'
 import { Route as AppBuildersIndexRouteImport } from './routes/_app.builders.index'
 import { Route as AppBuildersBuilderRouteImport } from './routes/_app.builders.$builder'
 import { Route as AppFoundationBibleIndexRouteImport } from './routes/_app.foundation.bible.index'
+import { Route as ApiPublicHooksSiteHealthRouteImport } from './routes/api/public/hooks/site-health'
 import { Route as AppFoundationBibleChapterRouteImport } from './routes/_app.foundation.bible.$chapter'
 
 const AuthRoute = AuthRouteImport.update({
@@ -118,6 +119,12 @@ const AppFoundationBibleIndexRoute = AppFoundationBibleIndexRouteImport.update({
   path: '/bible/',
   getParentRoute: () => AppFoundationRoute,
 } as any)
+const ApiPublicHooksSiteHealthRoute =
+  ApiPublicHooksSiteHealthRouteImport.update({
+    id: '/api/public/hooks/site-health',
+    path: '/api/public/hooks/site-health',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AppFoundationBibleChapterRoute =
   AppFoundationBibleChapterRouteImport.update({
     id: '/bible/$chapter',
@@ -143,6 +150,7 @@ export interface FileRoutesByFullPath {
   '/builders/$builder': typeof AppBuildersBuilderRoute
   '/builders/': typeof AppBuildersIndexRoute
   '/foundation/bible/$chapter': typeof AppFoundationBibleChapterRoute
+  '/api/public/hooks/site-health': typeof ApiPublicHooksSiteHealthRoute
   '/foundation/bible/': typeof AppFoundationBibleIndexRoute
 }
 export interface FileRoutesByTo {
@@ -163,6 +171,7 @@ export interface FileRoutesByTo {
   '/builders/$builder': typeof AppBuildersBuilderRoute
   '/builders': typeof AppBuildersIndexRoute
   '/foundation/bible/$chapter': typeof AppFoundationBibleChapterRoute
+  '/api/public/hooks/site-health': typeof ApiPublicHooksSiteHealthRoute
   '/foundation/bible': typeof AppFoundationBibleIndexRoute
 }
 export interface FileRoutesById {
@@ -185,6 +194,7 @@ export interface FileRoutesById {
   '/_app/builders/$builder': typeof AppBuildersBuilderRoute
   '/_app/builders/': typeof AppBuildersIndexRoute
   '/_app/foundation/bible/$chapter': typeof AppFoundationBibleChapterRoute
+  '/api/public/hooks/site-health': typeof ApiPublicHooksSiteHealthRoute
   '/_app/foundation/bible/': typeof AppFoundationBibleIndexRoute
 }
 export interface FileRouteTypes {
@@ -207,6 +217,7 @@ export interface FileRouteTypes {
     | '/builders/$builder'
     | '/builders/'
     | '/foundation/bible/$chapter'
+    | '/api/public/hooks/site-health'
     | '/foundation/bible/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -227,6 +238,7 @@ export interface FileRouteTypes {
     | '/builders/$builder'
     | '/builders'
     | '/foundation/bible/$chapter'
+    | '/api/public/hooks/site-health'
     | '/foundation/bible'
   id:
     | '__root__'
@@ -248,12 +260,14 @@ export interface FileRouteTypes {
     | '/_app/builders/$builder'
     | '/_app/builders/'
     | '/_app/foundation/bible/$chapter'
+    | '/api/public/hooks/site-health'
     | '/_app/foundation/bible/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ApiPublicHooksSiteHealthRoute: typeof ApiPublicHooksSiteHealthRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -384,6 +398,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppFoundationBibleIndexRouteImport
       parentRoute: typeof AppFoundationRoute
     }
+    '/api/public/hooks/site-health': {
+      id: '/api/public/hooks/site-health'
+      path: '/api/public/hooks/site-health'
+      fullPath: '/api/public/hooks/site-health'
+      preLoaderRoute: typeof ApiPublicHooksSiteHealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_app/foundation/bible/$chapter': {
       id: '/_app/foundation/bible/$chapter'
       path: '/bible/$chapter'
@@ -449,17 +470,8 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   AuthRoute: AuthRoute,
+  ApiPublicHooksSiteHealthRoute: ApiPublicHooksSiteHealthRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

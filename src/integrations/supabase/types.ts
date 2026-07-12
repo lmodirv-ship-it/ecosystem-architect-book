@@ -161,6 +161,13 @@ export type Database = {
             referencedRelation: "sites"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "health_checks_site_id_fkey"
+            columns: ["site_id"]
+            isOneToOne: false
+            referencedRelation: "sites_with_uptime"
+            referencedColumns: ["id"]
+          },
         ]
       }
       invoices: {
@@ -486,6 +493,13 @@ export type Database = {
             referencedRelation: "sites"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "projects_linked_site_id_fkey"
+            columns: ["linked_site_id"]
+            isOneToOne: false
+            referencedRelation: "sites_with_uptime"
+            referencedColumns: ["id"]
+          },
         ]
       }
       sites: {
@@ -707,7 +721,75 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      sites_with_uptime: {
+        Row: {
+          app_type: string | null
+          category: string | null
+          checks_24h: number | null
+          created_at: string | null
+          domain: string | null
+          id: string | null
+          last_checked_at: string | null
+          last_latency_ms: number | null
+          last_status_code: number | null
+          linked_database: string | null
+          linked_project_id: string | null
+          metadata: Json | null
+          name: string | null
+          server: string | null
+          ssl_expires_at: string | null
+          status: Database["public"]["Enums"]["site_status"] | null
+          updated_at: string | null
+          uptime_24h_pct: number | null
+          url: string | null
+          version: string | null
+        }
+        Insert: {
+          app_type?: string | null
+          category?: string | null
+          checks_24h?: never
+          created_at?: string | null
+          domain?: string | null
+          id?: string | null
+          last_checked_at?: string | null
+          last_latency_ms?: number | null
+          last_status_code?: number | null
+          linked_database?: string | null
+          linked_project_id?: string | null
+          metadata?: Json | null
+          name?: string | null
+          server?: string | null
+          ssl_expires_at?: string | null
+          status?: Database["public"]["Enums"]["site_status"] | null
+          updated_at?: string | null
+          uptime_24h_pct?: never
+          url?: string | null
+          version?: string | null
+        }
+        Update: {
+          app_type?: string | null
+          category?: string | null
+          checks_24h?: never
+          created_at?: string | null
+          domain?: string | null
+          id?: string | null
+          last_checked_at?: string | null
+          last_latency_ms?: number | null
+          last_status_code?: number | null
+          linked_database?: string | null
+          linked_project_id?: string | null
+          metadata?: Json | null
+          name?: string | null
+          server?: string | null
+          ssl_expires_at?: string | null
+          status?: Database["public"]["Enums"]["site_status"] | null
+          updated_at?: string | null
+          uptime_24h_pct?: never
+          url?: string | null
+          version?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       has_role: {
@@ -716,6 +798,11 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      seed_demo_data: { Args: { _admin: string }; Returns: undefined }
+      site_uptime_pct: {
+        Args: { _hours?: number; _site_id: string }
+        Returns: number
       }
     }
     Enums: {
