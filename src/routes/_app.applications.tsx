@@ -309,13 +309,13 @@ function SiteCard({
   checking,
   canDelete,
 }: {
-  site: SiteRow;
+  site: SiteWithUptime;
   onCheck: () => void;
   onDelete: () => void;
   checking: boolean;
   canDelete: boolean;
 }) {
-  const tone = STATUS_TONE[site.status];
+  const tone = STATUS_TONE[site.status as SiteStatus];
   const catMeta = HN_CATEGORY_META[site.category as keyof typeof HN_CATEGORY_META];
   return (
     <GlassCard className="group relative overflow-hidden p-4">
