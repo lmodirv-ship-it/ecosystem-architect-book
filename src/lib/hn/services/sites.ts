@@ -103,51 +103,37 @@ export async function seedSitesFromEcosystem(): Promise<{ inserted: number }> {
 }
 
 /**
- * Client-side health check via HEAD/GET. Because CORS blocks reading response
- * headers for third-party domains, we use `no-cors` and time the request —
- * a settled promise means the host is reachable.
+ * Real health check — delegates to the server route which fetches with a
+ * true HEAD/GET (no CORS constraints) and records exact HTTP status codes.
+ * Called on-demand from the UI; cron runs the same endpoint every 5 minutes.
  */
 export async function checkSiteHealth(site: Pick<SiteRow, "id" | "url">): Promise<{
   is_up: boolean;
   latency_ms: number;
   status: SiteStatus;
 }> {
-  const started = performance.now();
-  let is_up = false;
-  let latency = 0;
-  try {
-    const controller = new AbortController();
-    const t = setTimeout(() => controller.abort(), 8000);
-    await fetch(site.url, { method: "GET", mode: "no-cors", signal: controller.signal });
-    clearTimeout(t);
-    latency = Math.round(performance.now() - started);
-    is_up = true;
-  } catch {
-    latency = Math.round(performance.now() - started);
-    is_up = false;
-  }
-  const status: SiteStatus = is_up
-    ? latency > 3000
-      ? "degraded"
-      : "online"
-    : "offline";
-
-  await supabase.from("health_checks").insert({
-    site_id: site.id,
-    is_up,
-    latency_ms: latency,
-    status_code: is_up ? 200 : null,
+  const res = await fetch("/api/public/hooks/site-health", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ site_ids: [site.id] }),
   });
-  await supabase
-    .from("sites")
-    .update({
-      status,
-      last_checked_at: new Date().toISOString(),
-      last_latency_ms: latency,
-      last_status_code: is_up ? 200 : null,
-    })
-    .eq("id", site.id);
-  return { is_up, latency_ms: latency, status };
+  if (!res.ok) throw new Error(`Health check failed (${res.status})`);
+  const json = (await res.json()) as {
+    results: Array<{ id: string; status: SiteStatus; latency: number }>;
+  };
+  const r = json.results?.[0];
+  if (!r) throw new Error("No result returned");
+  return { is_up: r.status !== "offline", latency_ms: r.latency, status: r.status };
+}
+
+export async function checkSitesBatch(ids: string[]) {
+  const res = await fetch("/api/public/hooks/site-health", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ site_ids: ids }),
+  });
+  if (!res.ok) throw new Error(`Batch check failed (${res.status})`);
+  return res.json() as Promise<{ checked: number }>;
 }
 
 export async function logActivity(
