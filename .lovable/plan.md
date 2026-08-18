@@ -1,74 +1,84 @@
-# خطة التطوير الجادّة — HN Platform
+# خطة التطوير الجادّ — HN Platform
 
-## الوضع الحالي (تشخيص سريع)
-- **16 جدول** جاهز في Lovable Cloud مع RLS، لكن **كلها فارغة** (0 صفوف في كل جدول).
-- الواجهة كاملة (Dashboard, Sidebar, Sphere, Builders, Bible) لكن معظم الصفحات ما زالت Placeholders.
-- المصادقة تعمل، ولا يوجد مستخدم واحد مسجّل حتى الآن.
-- 141 موقع في `ecosystem.ts` غير مُستورد فعلياً إلى `sites`.
-- لا يوجد AI Gateway مربوط، ولا Automation، ولا Storage، ولا Edge Functions للـ health checks الحقيقية.
+## تشخيص الوضع الحالي (مُتحقَّق منه الآن)
 
-## الفجوة الجوهرية
-المنصّة اليوم = **قشرة جميلة فوق قاعدة بيانات فارغة**. التطوير الجادّ = تحويلها إلى **نظام تشغيلي فعلي** يُدار من داخله.
+- **قاعدة البيانات فارغة تماماً**: 16 جدولاً + 0 صفوف في كلٍّ منها، و**0 مستخدم** في نظام الدخول.
+- **عائق حرج (Blocker)**: دالة البيانات التجريبية `seed_demo_data` تكتب في أعمدة باسم `user_id` بينما الجداول الفعلية (customers, orders, payments, subscriptions, invoices, products, tasks, notifications, calendar_events, support_tickets) تستخدم `owner_id`. هذه الدالة تُستدعى تلقائياً عبر Trigger عند منح دور Admin لأول مستخدم — أي أن **أول عملية تسجيل ستفشل** (خطأ 500 عند إنشاء الحساب). لا شيء في المنصّة يعمل قبل إصلاح هذا.
+- المهمة المجدولة (كل 5 دقائق) تعمل فعلاً لكنها بلا فائدة الآن: لا مواقع في `sites` لتُفحَص.
+- **8 صفحات ما زالت Placeholder** (24 سطراً لكل واحدة): AI Center · Analytics · Automation · Cloud · Database · Nawat · Security · Settings.
+- الصفحات المكتملة فعلياً: Dashboard، Applications، Projects، Core، Builders، Foundation/Bible.
 
----
-
-## المراحل (6 مراحل، كل مرحلة قابلة للتسليم مستقلّة)
-
-### المرحلة 1 — التأسيس التشغيلي (Foundations)
-- استيراد الـ141 موقع من `ecosystem.ts` إلى جدول `sites` تلقائياً عند أول دخول Admin.
-- **Edge Function** حقيقية لفحص الحالة (بدلاً من `no-cors` في المتصفح): تُشغَّل عبر `pg_cron` كل 5 دقائق، تكتب في `health_checks` وتحدّث `sites.status/latency/ssl_expires_at`.
-- صفحة `/applications` تعرض الحالة الحية + SSL + Uptime % آخر 24 ساعة.
-- Seed بيانات تجريبية واقعية (Demo Mode) للـDashboard حتى يرى المالك المنصّة تعمل قبل ربط مصادره.
-
-### المرحلة 2 — HN Cloud + Storage + Deployments
-- تفعيل Storage buckets: `avatars`, `project-assets`, `site-backups`.
-- جدول `deployments` + صفحة `/cloud` تعرض النشر الفعلي (سجل، حالة، rollback).
-- ربط رفع صور الملف الشخصي والمشاريع بـStorage.
-
-### المرحلة 3 — HN AI Center (المساعد الحقيقي)
-- ربط **Lovable AI Gateway** (Gemini افتراضياً) عبر `createServerFn`.
-- المساعد يقرأ Architecture Bible + بيانات المستخدم الحيّة كسياق.
-- 4 أوامر جاهزة: Create Project · Analyze Revenue · Generate Report · Health Check.
-- سجل محادثات في جدول `ai_conversations` + `ai_messages` (يُضاف في migration).
-- Streaming responses + Rate limiting.
-
-### المرحلة 4 — Builders الحقيقية
-- **Website Builder**: قوالب جاهزة → ينشئ مشروع + Site مربوط + Deployment أوّلي.
-- **Database Builder**: واجهة لإنشاء جداول داخل مشروع المستخدم (schema-per-project أو RLS-tenant).
-- **Application Builder**: Scaffolding لتطبيق داخلي (form + table + API) يظهر في `/applications`.
-- كل Builder يكتب Activity Log ويظهر في `Recent Projects`.
-
-### المرحلة 5 — Automation + Governance
-- جدول `automations` (trigger + action + schedule) + محرّك تنفيذ عبر Edge Function + pg_cron.
-- Automations جاهزة: تنبيه SSL قبل انتهاء 14 يوم، تنبيه Site down > 5 دقائق، تنبيه Payment failed، تقرير أسبوعي بالإيميل.
-- **Notifications** حقيقية (in-app + Email عبر Resend).
-- **Audit Log** موحّد لكل عمليات Admin.
-- User Management: دعوة أعضاء، تعيين أدوار (admin/editor/viewer)، صفحة `/settings/team`.
-
-### المرحلة 6 — الجودة والإطلاق
-- **Security Scan** + معالجة كل التنبيهات (RLS, exposed columns, leaked passwords HIBP).
-- **SEO + Metadata** لكل صفحة عامة (og:image ديناميكي، sitemap، robots).
-- **Performance**: Lighthouse ≥ 90، صور مضغوطة، lazy loading، Suspense boundaries.
-- **Tests**: E2E عبر Playwright للمسارات الحرجة (auth, dashboard, import, create project).
-- **Docs**: تحديث Bible بما تم بناؤه فعلياً + دليل المستخدم النهائي.
-- **Publish** + Custom Domain.
+**الخلاصة**: الواجهة متقدّمة، لكن المنصّة غير قابلة للاستخدام لأن باب الدخول نفسه مكسور والقاعدة فارغة.
 
 ---
 
-## قواعد تنفيذ ملزِمة (تُطبَّق في كل مرحلة)
-1. **لا Placeholder بعد اليوم** — أي صفحة تُلمس يجب أن تصبح وظيفية بالكامل قبل الانتقال.
-2. **لا بيانات ثابتة في TypeScript** لأي شيء قابل للتغيير — كل شيء في Cloud.
-3. كل Feature = Migration + Service + UI + Activity Log + اختبار يدوي موثّق.
-4. HN Design Language فقط (tokens دلالية، لا ألوان مباشرة).
+## المرحلة 0 — رفع العوائق (أولوية قصوى، قبل أي ميزة)
+
+1. إعادة كتابة `seed_demo_data` لتستخدم `owner_id` وأسماء الأعمدة الحقيقية (`plan_name` بدل `plan`, `active` بدل `status` للمنتجات، إلخ) مع عملة `SAR`.
+2. تحصين `handle_new_user` و`tg_seed_admin_demo` بمعالجة أخطاء، بحيث لا يمنع فشل البيانات التجريبية إنشاء الحساب أبداً.
+3. إصلاح سياسات `user_roles`: حالياً لا يوجد INSERT/UPDATE/DELETE مسموح — أي أن إدارة الأدوار مستحيلة من التطبيق. إضافة سياسات للـAdmin فقط.
+4. استيراد الـ141 موقعاً من `ecosystem.ts` إلى `sites` عبر Migration مباشرة (لا انتظار لزر يدوي)، ليبدأ الفحص التلقائي فوراً.
+5. اختبار مسار كامل: تسجيل حساب → أصبح Admin → لوحة تحكم مليئة بالبيانات → 141 موقعاً في Applications.
+
+## المرحلة 1 — الإعدادات والفريق والأمان (تحويل 3 صفحات فارغة)
+
+- **`/settings`**: الملف الشخصي (اسم + صورة عبر Storage bucket `avatars`)، تفضيلات اللغة/الثيم، تغيير كلمة المرور، الجلسات.
+- **`/settings/team`**: قائمة الأعضاء، دعوة، تعيين دور (admin/editor/viewer)، سجل التغييرات.
+- **`/security`**: حالة RLS لكل جدول، آخر أحداث الدخول، سجل التدقيق (Audit Log) من `activity_log` بفلاتر وبحث.
+
+## المرحلة 2 — AI Center + Nawat (العقل الحقيقي)
+
+- ربط Lovable AI Gateway عبر `createServerFn` مع Streaming.
+- جدولا `ai_conversations` + `ai_messages` مع RLS.
+- سياق المساعد = Architecture Bible + مؤشرات المستخدم الحيّة (إيرادات، مواقع متوقّفة، مدفوعات فاشلة).
+- 4 أوامر تنفيذية: إنشاء مشروع · تحليل الإيرادات · تقرير أسبوعي · فحص صحّة الشبكة.
+- **Nawat** = الذاكرة طويلة الأمد: `knowledge_nodes` (نص + وسوم + بحث) تُغذّي المساعد.
+
+## المرحلة 3 — Analytics حقيقية
+
+- لوحة تحليلات: إيرادات (يومي/شهري/سنوي)، MRR، Churn، LTV، أعلى المنتجات، مصادر الطلبات.
+- استعلامات مُجمَّعة عبر SQL Views + `createServerFn` (لا حسابات ثقيلة في المتصفح).
+- تصدير CSV/PDF + مقارنة فترات.
+
+## المرحلة 4 — Cloud + Database Builder (المنتَج الفعلي)
+
+- **`/cloud`**: جدول `deployments` (سجل النشر، الحالة، الدومين، SSL، rollback) + Storage buckets `project-assets` و`site-backups`.
+- **`/database`**: مستعرض جداول المشروع، مصمّم حقول، معاينة بيانات، استيراد/تصدير CSV.
+- كل عملية تُسجَّل في `activity_log` وتظهر في النشاط الأخير.
+
+## المرحلة 5 — Automation + Notifications
+
+- جدول `automations` (trigger + action + schedule) ومحرّك تنفيذ عبر مسار cron موجود أصلاً.
+- قواعد جاهزة: SSL ينتهي خلال 14 يوماً · موقع متوقّف > 5 دقائق · دفعة فاشلة · تقرير أسبوعي.
+- إشعارات داخل التطبيق (Realtime) + بريد إلكتروني.
+
+## المرحلة 6 — الجودة والإطلاق
+
+- Security Scan ومعالجة كل التنبيهات، مراجعة كل دوال SECURITY DEFINER.
+- SEO لكل صفحة عامة + sitemap + og:image.
+- اختبارات Playwright للمسارات الحرجة (تسجيل، لوحة، استيراد، إنشاء مشروع).
+- الأداء: Suspense، تقسيم الحِزم، صور محسّنة.
+- نشر + دومين مخصّص + تحديث الـBible بما بُني فعلاً.
+
+---
+
+## قواعد ملزِمة في كل مرحلة
+
+1. لا Placeholder بعد اليوم — أي صفحة تُلمس تُسلَّم وظيفية بالكامل.
+2. لا بيانات ثابتة في TypeScript لأي شيء قابل للتغيير.
+3. كل ميزة = Migration + Service + UI + Activity Log + اختبار موثّق.
+4. HN Design Language فقط (توكنز دلالية، لا ألوان مباشرة).
 5. RLS + GRANT على كل جدول جديد، بلا استثناء.
-6. كل تغيير Backend يمرّ عبر `createServerFn` (ليس Edge Function) إلا للـ webhooks والـ cron.
+6. المنطق الداخلي عبر `createServerFn`؛ الـcron/webhooks عبر مسارات `/api/public/*`.
 
 ---
 
-## اقتراح الدفعة القادمة (لو وافقت)
-أنفّذ **المرحلة 1 كاملة** في دفعة واحدة:
-- استيراد الـ141 موقع + Edge Function للـhealth + pg_cron.
-- Demo seed للـDashboard.
-- `/applications` تعمل بالكامل بالبيانات الحيّة.
+## تفاصيل تقنية
 
-هل أبدأ بالمرحلة 1، أم تفضّل ترتيباً مختلفاً (مثلاً AI Center أولاً)؟
+- المهمة المجدولة القائمة تستدعي `/api/public/hooks/site-health` بـ `{"limit":60}` كل 5 دقائق — تكفي 141 موقعاً بدورة كاملة كل ~15 دقيقة؛ سنرفع `limit` أو ندعم الترتيب بالأقدم فحصاً.
+- سياسات الجداول التجارية حالياً `roles:{public}` مع `auth.uid() = owner_id`؛ سنضيّقها إلى `TO authenticated`.
+- `sites_with_uptime` (View) مستخدمة في الخدمة — نتحقّق من صلاحياتها بعد استيراد المواقع.
+
+## الدفعة القادمة عند الموافقة
+
+المرحلة 0 كاملة: إصلاح دالة البيانات التجريبية + تحصين إنشاء الحساب + سياسات الأدوار + استيراد 141 موقعاً، ثم اختبار مسار الدخول من البداية للنهاية.
